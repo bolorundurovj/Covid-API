@@ -200,6 +200,74 @@ function  getStats(countryObj, results) {
     return country_statistics;
 }
 
+app.get("/all", (req, res) => {
+    db.collection('covid_statistics').findOne().then((results) => {
+        res.status(200).json(results);
+    })
+});
+
+app.get('/geo', (req, res) => {
+    
+    db.collection('covid_statistics').findOne().then((results) => {
+        if (results) {
+            let data = [];
+            let result = JSON.parse(JSON.stringify(results));
+            let total_cases = 0;
+
+            let country;
+
+            result.country_statistics.forEach(cntry => {
+                country = cntry.country;
+
+                cntry.states.forEach(state => {
+                    let state_name;
+                    let state_address;
+                    let latitude;
+                    let longitude;
+                    let confirmed = 0;
+                    let deaths = 0;
+                    let recovered = let
+                    let name = cntry.states.name;
+                    
+                    state.filter(city => city.name === name).map(e => {
+                        state_name = e.name;
+                        state_address = e.address;
+                        latitude = e.latitude;
+                        longitude = e.longitude;
+                        confirmed = confirmed + parseInt(e.confirmed);
+                        deaths = deaths + parseInt(e.deaths);
+                        recovered = recovered + parseInt(e.recovered);
+                        total_cases = parseInt(confirmed) + parseInt(deaths) + parseInt(recovered);
+                    });
+                    
+                    var item = {
+                        type: "Feature",
+                        geometry: {
+                            type: "Point",
+                            coordinates: [longitude, latitude]
+                        },
+                        properties: {
+                            key: j,
+                            country: country,
+                            name: state_name,
+                            address: state_address,
+                            confirmed: confirmed,
+                            deaths: deaths,
+                            recovered: recovered,
+                            total_cases: total_cases
+                        }
+                    }
+                    data.push(item);
+                });
+            });
+            data = data.filter((obj, pos, arr) => {
+                return arr.map(mapObj => mapObj.properties.name).indexOf(obj.properties.name) == pos;
+            });
+            res.json(data);
+        }
+    })
+})
+
 app.listen(port, () => {
   console.log(`Live on http://localhost:${port}`);
 });
