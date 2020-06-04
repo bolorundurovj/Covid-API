@@ -25,7 +25,7 @@ db.once("open", function (callback) {
   console.log("Database connection succeeded for covid19 Api");
 });
 
-cron.schedule("18 37 * * * *", () => {
+cron.schedule("19 36 * * * *", () => {
   let date = new Date();
   let day = date.getUTCDay();
   let year = date.getUTCFullYear();
@@ -193,7 +193,7 @@ function  getStats(countryObj, results) {
         confirmed: confirmed,
         deaths: deaths,
         recovered: recovered,
-        states: statistics.sort().filter(function(el){return (el.address)})
+        states: statistics.sort()
     }
     console.log(country_statistics);
     
@@ -206,30 +206,31 @@ app.get("/all", (req, res) => {
     })
 });
 
-app.get('/geo', (req, res) => {
+app.get('/markers.geojson', (req, res) => {
     
     db.collection('covid_statistics').findOne().then((results) => {
         if (results) {
             let data = [];
             let result = JSON.parse(JSON.stringify(results));
             let total_cases = 0;
-
             let country;
+            
+            for (var i = 0; i < result.country_statistics.length; i++) {
+                country = result.country_statistics[i].country;
 
-            result.country_statistics.forEach(cntry => {
-                country = cntry.country;
-
-                cntry.states.forEach(state => {
+                for (var j = 0; j < result.country_statistics[i].states.length; j++) {
+                    
                     let state_name;
                     let state_address;
                     let latitude;
                     let longitude;
                     let confirmed = 0;
                     let deaths = 0;
-                    let recovered = let
-                    let name = cntry.states.name;
+                    let recovered = 0;
+                    let active = 0;
+                    let name = result.country_statistics[i].states[j].name;
                     
-                    state.filter(city => city.name === name).map(e => {
+                    result.country_statistics[i].states.filter(city => city.name === name).map(e => {
                         state_name = e.name;
                         state_address = e.address;
                         latitude = e.latitude;
@@ -237,10 +238,11 @@ app.get('/geo', (req, res) => {
                         confirmed = confirmed + parseInt(e.confirmed);
                         deaths = deaths + parseInt(e.deaths);
                         recovered = recovered + parseInt(e.recovered);
+                        active = active + parseInt(e.active);
                         total_cases = parseInt(confirmed) + parseInt(deaths) + parseInt(recovered);
                     });
                     
-                    var item = {
+                    let item = {
                         type: "Feature",
                         geometry: {
                             type: "Point",
@@ -254,12 +256,13 @@ app.get('/geo', (req, res) => {
                             confirmed: confirmed,
                             deaths: deaths,
                             recovered: recovered,
+                            active: active,
                             total_cases: total_cases
                         }
                     }
                     data.push(item);
-                });
-            });
+                }
+            }
             data = data.filter((obj, pos, arr) => {
                 return arr.map(mapObj => mapObj.properties.name).indexOf(obj.properties.name) == pos;
             });
