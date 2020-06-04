@@ -215,9 +215,11 @@ app.get('/markers.geojson', (req, res) => {
             let total_cases = 0;
             let country;
             
+            //For each country
             for (var i = 0; i < result.country_statistics.length; i++) {
                 country = result.country_statistics[i].country;
 
+                //For each state
                 for (var j = 0; j < result.country_statistics[i].states.length; j++) {
                     
                     let state_name;
