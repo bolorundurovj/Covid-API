@@ -25,7 +25,7 @@ db.once("open", function (callback) {
   console.log("Database connection succeeded for covid19 Api");
 });
 
-cron.schedule("19 36 * * * *", () => {
+cron.schedule("22 43 * * * *", () => {
   let date = new Date();
   let day = date.getUTCDay();
   let year = date.getUTCFullYear();
@@ -157,7 +157,7 @@ function  getStats(countryObj, results) {
             } else {
                 state_name = country;
             }
-            state_address = results.Combined_Key;
+            state_address = result.Combined_Key;
 
             if (result.Lat !== undefined && result.Lat.length > 0 && result.Long_ !== undefined && result.Long_.length > 0) {
                 state_latitude = parseFloat(result.Lat);
@@ -170,6 +170,7 @@ function  getStats(countryObj, results) {
             state_confirmed_count = result.Confirmed;
             state_deaths_count = result.Deaths;
             state_recovered_count = result.Recovered;
+            state_active_count = result.Active;
 
             let state_statistics = {
                 key: Math.random().toString(36).substr(2, 5),
@@ -179,6 +180,7 @@ function  getStats(countryObj, results) {
                 longitude: state_longitude,
                 confirmed: state_confirmed_count,
                 deaths: state_deaths_count,
+                active: state_active_count,
                 recovered: state_recovered_count
             }
             statistics.push(state_statistics);
