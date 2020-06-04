@@ -9,10 +9,11 @@ const csv = require('csv-parser');
 const app = express();
 
 const Data = require("./models/data");
+const countryList = require("./countries.json");
 
 app.use(cors());
 
-const port = process.env.PORT || 4910;
+const port = process.env.PORT || 4915;
 
 mongoose.connect("mongodb://localhost:27017/covid19Api", {
   useNewUrlParser: true,
@@ -24,7 +25,7 @@ db.once("open", function (callback) {
   console.log("Database connection succeeded for covid19 Api");
 });
 
-cron.schedule("17 30 * * * *", () => {
+cron.schedule("18 37 * * * *", () => {
   let date = new Date();
   let day = date.getUTCDay();
   let year = date.getUTCFullYear();
@@ -58,10 +59,11 @@ cron.schedule("17 30 * * * *", () => {
   const file = fs.createWriteStream(fileName);
 
   const results = [];
-  var data = [];
-  var totalConfirmed = 0;
-  var totalDeaths = 0;
-  var totalRecovered = 0;
+  let data = [];
+  let totalConfirmed = 0;
+  let totalDeaths = 0;
+  let totalRecovered = 0;
+  let totalActive = 0;
 
   request
     .get(
@@ -76,14 +78,127 @@ cron.schedule("17 30 * * * *", () => {
         .pipe(csv())
         .on("data", (data) => results.push(data))
         .on("end", () => {
-          console.log(results);
+          //console.log(results);
 
-        //   if(results > 0){
+          if(results.length > 0){
+            // for(var i =0; i < results.length; i++){
+            //     console.log(results[i]);
+            // }
 
-        //   }
+            results.forEach(result => {
+                totalActive += parseInt(result.Active);
+                totalRecovered += parseInt(result.Recovered);
+                totalConfirmed += parseInt(result.Confirmed);
+                totalDeaths += parseInt(result.Deaths);                
+            });
+
+            countryList.forEach(country => {
+                let countryObj = JSON.parse(JSON.stringify(country));
+                let state = getStats(countryObj, results);
+                data.push(state);
+            });
+
+            var items = ({
+                total_confirmed: totalConfirmed,
+                total_deaths: totalDeaths,
+                total_recovered: totalRecovered,
+                total_active: totalActive,
+                last_date_updated: date,
+                country_statistics: data.sort()
+            })
+
+            db.collection("covid_statistics").deleteOne({});
+            db.collection("covid_statistics").insertOne(items).then(() => {
+                console.log("inserted successfully");
+                
+            })
+          }
         });
     });
 });
+
+function  getStats(countryObj, results) {
+    const statistics = [];
+
+    let country;
+    let code;
+    let flag;
+    let coordinates;
+
+    let confirmed = 0;
+    let deaths = 0;
+    let recovered = 0;
+    let active = 0;
+
+    let state_name;
+    let state_latitude;
+    let state_longitude;
+    let state_address;
+    let state_confirmed_count = 0;
+    let state_deaths_count = 0;
+    let state_recovered_count = 0;
+
+    let country_statistics;
+
+    results.forEach(result => {
+        if(result.Country_Region == countryObj.country){
+            country = result.Country_Region;
+            code = countryObj.code;
+            flag = countryObj.flag;
+            coordinates = countryObj.coordinates;
+
+            active += parseInt(result.Active);
+            recovered += parseInt(result.Recovered);
+            deaths += parseInt(result.Deaths);
+            confirmed += parseInt(result.Confirmed);
+
+            if (result.Province_State.length > 0) {
+                state_name = result.Province_State;
+            } else {
+                state_name = country;
+            }
+            state_address = results.Combined_Key;
+
+            if (result.Lat !== undefined && result.Lat.length > 0 && result.Long_ !== undefined && result.Long_.length > 0) {
+                state_latitude = parseFloat(result.Lat);
+                state_longitude = parseFloat(result.Long_);
+            } else {
+                state_latitude = 0.0;
+                state_longitude = 0.0;
+            }
+
+            state_confirmed_count = result.Confirmed;
+            state_deaths_count = result.Deaths;
+            state_recovered_count = result.Recovered;
+
+            let state_statistics = {
+                key: Math.random().toString(36).substr(2, 5),
+                name: state_name,
+                address: state_address,
+                latitude: state_latitude,
+                longitude: state_longitude,
+                confirmed: state_confirmed_count,
+                deaths: state_deaths_count,
+                recovered: state_recovered_count
+            }
+            statistics.push(state_statistics);
+        }
+    });
+
+    country_statistics = {
+        country: country,
+        code: code,
+        flag: flag,
+        coordinates: coordinates,
+        confirmed: confirmed,
+        deaths: deaths,
+        recovered: recovered,
+        states: statistics.sort().filter(function(el){return (el.address)})
+    }
+    console.log(country_statistics);
+    
+    return country_statistics;
+}
 
 app.listen(port, () => {
   console.log(`Live on http://localhost:${port}`);
