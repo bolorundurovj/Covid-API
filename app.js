@@ -25,7 +25,7 @@ db.once("open", function (callback) {
   console.log("Database connection succeeded for covid19 Api");
 });
 
-cron.schedule("22 43 * * * *", () => {
+cron.schedule("08 40 * * * *", () => {
   let date = new Date();
   let day = date.getUTCDay();
   let year = date.getUTCFullYear();
@@ -274,6 +274,12 @@ app.get('/markers.geojson', (req, res) => {
         }
     })
 })
+
+app.get("/", (req, res) => {
+    db.collection('covid_statistics').findOne().then((results) => {
+        res.status(200).json(results);
+    })
+});
 
 app.listen(port, () => {
   console.log(`Live on http://localhost:${port}`);
