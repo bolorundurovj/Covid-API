@@ -30,7 +30,7 @@ db.once("open", function (callback) {
   console.log("Database connection succeeded for covid19 Api");
 });
 
-cron.schedule("13 38 * * * *", () => {
+cron.schedule("23 59 * * * *", () => {
   let date = new Date();
   let day = date.getUTCDay();
   let year = date.getUTCFullYear();
