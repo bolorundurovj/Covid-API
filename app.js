@@ -6,6 +6,8 @@ const cron = require("node-cron");
 const fs = require("fs");
 const csv = require("csv-parser");
 
+require('dotenv').config();
+
 const app = express();
 
 const Data = require("./models/data");
@@ -16,7 +18,7 @@ app.use(cors());
 const port = process.env.PORT || 4915;
 
 //mongodb://localhost:27017/covid19Api
-mongoose.connect("mongodb://covid:covid2019@ds159129.mlab.com:59129/covid19api", {
+mongoose.connect(process.env.URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
