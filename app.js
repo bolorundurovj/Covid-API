@@ -212,7 +212,7 @@ app.get("/all", (req, res) => {
     });
 });
 
-app.get("/markers.geojson", (req, res) => {
+app.get("/geojson", (req, res) => {
   db.collection("covid_statistics")
     .findOne()
     .then((results) => {
@@ -360,46 +360,61 @@ app.get("/timeline/all", (req, res) => {
       });
     });
 
-    res.json(mainData)
+    res.json(mainData);
   });
 });
 
 app.get("/timeline/:country", (req, res) => {
-    var options = {
-      url:
-        "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
-      method: "GET",
-    };
-    request(options, function (error, response, result) {
-      if (error) res.json(error);
-  
-      let rows = result.split("\n");
-      //console.log(rows);
-      let mainData = {};
-      let headers = rows[0];
-      let dates = headers.split(/,(?=\S)/);
-      dates.splice(0, 4);
-      rows.splice(0, 1);
-  
-      rows.forEach((row) => {
-        let cols = row.split(/,(?=\S)/);
-        let con = cols[1];
-        cols.splice(0, 4);
-        //console.log(con, cols);
-        mainData[con] = [];
-  
-        cols.forEach((value, index) => {
-          let dw = {
-            cases: +value,
-            country: con,
-            date: new Date(Date.parse(dates[index])),
-          };
-          mainData[con].push(dw);
-        });
-      });  
-      res.json(mainData)
+  let countryName = req.params.country.toUpperCase();
+  console.log(countryName);
+
+  let timeline;
+  var options = {
+    url:
+      "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
+    method: "GET",
+  };
+  request(options, function (error, response, result) {
+    if (error) res.json(error);
+
+    let rows = result.split("\n");
+    //console.log(rows);
+    let mainData = {};
+    let headers = rows[0];
+    let dates = headers.split(/,(?=\S)/);
+    dates.splice(0, 4);
+    rows.splice(0, 1);
+
+    rows.forEach((row) => {
+      let cols = row.split(/,(?=\S)/);
+      let con = cols[1];
+      cols.splice(0, 4);
+      //console.log(con, cols);
+      mainData[con] = [];
+
+      cols.forEach((value, index) => {
+        let dw = {
+          cases: +value,
+          country: con,
+          date: new Date(Date.parse(dates[index])),
+        };
+        mainData[con].push(dw);
+      });
     });
+
+    for (var key in mainData) {
+      let newKey = key.toUpperCase();
+      if (newKey == countryName) {
+        timeline = mainData[key];
+      }
+    }
+    if (timeline != null) {
+      res.status(200).json(timeline);
+    } else {
+      res.status(500).json("Country not in our Database");
+    }
   });
+});
 
 app.listen(port, () => {
   console.log(`Live on http://localhost:${port}`);
