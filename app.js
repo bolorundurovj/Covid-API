@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cron = require("node-cron");
 const fs = require("fs");
 const csv = require("csv-parser");
+const path = require('path');
 
 require('dotenv').config();
 
@@ -14,6 +15,7 @@ const Data = require("./models/data");
 const countryList = require("./countries.json");
 
 app.use(cors());
+app.use(express.static(path.join(__dirname, "public")));
 
 const port = process.env.PORT || 4915;
 
