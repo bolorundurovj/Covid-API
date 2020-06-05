@@ -15,7 +15,8 @@ app.use(cors());
 
 const port = process.env.PORT || 4915;
 
-mongoose.connect("mongodb://localhost:27017/covid19Api", {
+//mongodb://localhost:27017/covid19Api
+mongoose.connect("mongodb://covid:covid2019@ds159129.mlab.com:59129/covid19api", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -25,7 +26,7 @@ db.once("open", function (callback) {
   console.log("Database connection succeeded for covid19 Api");
 });
 
-cron.schedule("23 59 * * * *", () => {
+cron.schedule("13 38 * * * *", () => {
   let date = new Date();
   let day = date.getUTCDay();
   let year = date.getUTCFullYear();
