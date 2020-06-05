@@ -3,8 +3,8 @@ const request = require("request");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const cron = require("node-cron");
-const fs = require('fs');
-const csv = require('csv-parser');
+const fs = require("fs");
+const csv = require("csv-parser");
 
 const app = express();
 
@@ -80,242 +80,326 @@ cron.schedule("23 59 * * * *", () => {
         .on("end", () => {
           //console.log(results);
 
-          if(results.length > 0){
-
-            results.forEach(result => {
-                totalActive += parseInt(result.Active);
-                totalRecovered += parseInt(result.Recovered);
-                totalConfirmed += parseInt(result.Confirmed);
-                totalDeaths += parseInt(result.Deaths);                
+          if (results.length > 0) {
+            results.forEach((result) => {
+              totalActive += parseInt(result.Active);
+              totalRecovered += parseInt(result.Recovered);
+              totalConfirmed += parseInt(result.Confirmed);
+              totalDeaths += parseInt(result.Deaths);
             });
 
-            countryList.forEach(country => {
-                let countryObj = JSON.parse(JSON.stringify(country));
-                let state = getStats(countryObj, results);
-                data.push(state);
+            countryList.forEach((country) => {
+              let countryObj = JSON.parse(JSON.stringify(country));
+              let state = getStats(countryObj, results);
+              data.push(state);
             });
 
-            var items = ({
-                total_confirmed: totalConfirmed,
-                total_deaths: totalDeaths,
-                total_recovered: totalRecovered,
-                total_active: totalActive,
-                last_date_updated: date,
-                country_statistics: data.sort()
-            })
+            var items = {
+              total_confirmed: totalConfirmed,
+              total_deaths: totalDeaths,
+              total_recovered: totalRecovered,
+              total_active: totalActive,
+              last_date_updated: date,
+              country_statistics: data.sort(),
+            };
 
             db.collection("covid_statistics").deleteOne({});
-            db.collection("covid_statistics").insertOne(items).then(() => {
+            db.collection("covid_statistics")
+              .insertOne(items)
+              .then(() => {
                 console.log("inserted successfully");
-                
-            })
+              });
           }
         });
     });
 });
 
-function  getStats(countryObj, results) {
-    const statistics = [];
+function getStats(countryObj, results) {
+  const statistics = [];
 
-    let country;
-    let code;
-    let flag;
-    let coordinates;
+  let country;
+  let code;
+  let flag;
+  let coordinates;
 
-    let confirmed = 0;
-    let deaths = 0;
-    let recovered = 0;
-    let active = 0;
+  let confirmed = 0;
+  let deaths = 0;
+  let recovered = 0;
+  let active = 0;
 
-    let state_name;
-    let state_latitude;
-    let state_longitude;
-    let state_address;
-    let state_confirmed_count = 0;
-    let state_deaths_count = 0;
-    let state_recovered_count = 0;
+  let state_name;
+  let state_latitude;
+  let state_longitude;
+  let state_address;
+  let state_confirmed_count = 0;
+  let state_deaths_count = 0;
+  let state_recovered_count = 0;
 
-    let country_statistics;
+  let country_statistics;
 
-    results.forEach(result => {
-        if(result.Country_Region == countryObj.country){
-            country = result.Country_Region;
-            code = countryObj.code;
-            flag = countryObj.flag;
-            coordinates = countryObj.coordinates;
+  results.forEach((result) => {
+    if (result.Country_Region == countryObj.country) {
+      country = result.Country_Region;
+      code = countryObj.code;
+      flag = countryObj.flag;
+      coordinates = countryObj.coordinates;
 
-            active += parseInt(result.Active);
-            recovered += parseInt(result.Recovered);
-            deaths += parseInt(result.Deaths);
-            confirmed += parseInt(result.Confirmed);
+      active += parseInt(result.Active);
+      recovered += parseInt(result.Recovered);
+      deaths += parseInt(result.Deaths);
+      confirmed += parseInt(result.Confirmed);
 
-            if (result.Province_State.length > 0) {
-                state_name = result.Province_State;
-            } else {
-                state_name = country;
-            }
-            state_address = result.Combined_Key;
+      if (result.Province_State.length > 0) {
+        state_name = result.Province_State;
+      } else {
+        state_name = country;
+      }
+      state_address = result.Combined_Key;
 
-            if (result.Lat !== undefined && result.Lat.length > 0 && result.Long_ !== undefined && result.Long_.length > 0) {
-                state_latitude = parseFloat(result.Lat);
-                state_longitude = parseFloat(result.Long_);
-            } else {
-                state_latitude = 0.0;
-                state_longitude = 0.0;
-            }
+      if (
+        result.Lat !== undefined &&
+        result.Lat.length > 0 &&
+        result.Long_ !== undefined &&
+        result.Long_.length > 0
+      ) {
+        state_latitude = parseFloat(result.Lat);
+        state_longitude = parseFloat(result.Long_);
+      } else {
+        state_latitude = 0.0;
+        state_longitude = 0.0;
+      }
 
-            state_confirmed_count = result.Confirmed;
-            state_deaths_count = result.Deaths;
-            state_recovered_count = result.Recovered;
-            state_active_count = result.Active;
+      state_confirmed_count = result.Confirmed;
+      state_deaths_count = result.Deaths;
+      state_recovered_count = result.Recovered;
+      state_active_count = result.Active;
 
-            let state_statistics = {
-                key: Math.random().toString(36).substr(2, 5),
-                name: state_name,
-                address: state_address,
-                latitude: state_latitude,
-                longitude: state_longitude,
-                confirmed: state_confirmed_count,
-                deaths: state_deaths_count,
-                active: state_active_count,
-                recovered: state_recovered_count
-            }
-            statistics.push(state_statistics);
-        }
-    });
-
-    country_statistics = {
-        country: country,
-        code: code,
-        flag: flag,
-        coordinates: coordinates,
-        confirmed: confirmed,
-        deaths: deaths,
-        recovered: recovered,
-        states: statistics.sort()
+      let state_statistics = {
+        key: Math.random().toString(36).substr(2, 5),
+        name: state_name,
+        address: state_address,
+        latitude: state_latitude,
+        longitude: state_longitude,
+        confirmed: state_confirmed_count,
+        deaths: state_deaths_count,
+        active: state_active_count,
+        recovered: state_recovered_count,
+      };
+      statistics.push(state_statistics);
     }
-    console.log(country_statistics);
-    
-    return country_statistics;
+  });
+
+  country_statistics = {
+    country: country,
+    code: code,
+    flag: flag,
+    coordinates: coordinates,
+    confirmed: confirmed,
+    deaths: deaths,
+    recovered: recovered,
+    states: statistics.sort(),
+  };
+  console.log(country_statistics);
+
+  return country_statistics;
 }
 
 app.get("/all", (req, res) => {
-    db.collection('covid_statistics').findOne().then((results) => {
-        res.status(200).json(results);
-    })
+  db.collection("covid_statistics")
+    .findOne()
+    .then((results) => {
+      res.status(200).json(results);
+    });
 });
 
-app.get('/markers.geojson', (req, res) => {
-    
-    db.collection('covid_statistics').findOne().then((results) => {
-        if (results) {
-            let data = [];
-            let result = JSON.parse(JSON.stringify(results));
-            let total_cases = 0;
-            let country;
-            
-            //For each country
-            for (var i = 0; i < result.country_statistics.length; i++) {
-                country = result.country_statistics[i].country;
+app.get("/markers.geojson", (req, res) => {
+  db.collection("covid_statistics")
+    .findOne()
+    .then((results) => {
+      if (results) {
+        let data = [];
+        let result = JSON.parse(JSON.stringify(results));
+        let total_cases = 0;
+        let country;
 
-                //For each state
-                for (var j = 0; j < result.country_statistics[i].states.length; j++) {
-                    
-                    let state_name;
-                    let state_address;
-                    let latitude;
-                    let longitude;
-                    let confirmed = 0;
-                    let deaths = 0;
-                    let recovered = 0;
-                    let active = 0;
-                    let name = result.country_statistics[i].states[j].name;
-                    
-                    result.country_statistics[i].states.filter(city => city.name === name).map(e => {
-                        state_name = e.name;
-                        state_address = e.address;
-                        latitude = e.latitude;
-                        longitude = e.longitude;
-                        confirmed = confirmed + parseInt(e.confirmed);
-                        deaths = deaths + parseInt(e.deaths);
-                        recovered = recovered + parseInt(e.recovered);
-                        active = active + parseInt(e.active);
-                        total_cases = parseInt(confirmed) + parseInt(deaths) + parseInt(recovered);
-                    });
-                    
-                    let item = {
-                        type: "Feature",
-                        geometry: {
-                            type: "Point",
-                            coordinates: [longitude, latitude]
-                        },
-                        properties: {
-                            key: j,
-                            country: country,
-                            name: state_name,
-                            address: state_address,
-                            confirmed: confirmed,
-                            deaths: deaths,
-                            recovered: recovered,
-                            active: active,
-                            total_cases: total_cases
-                        }
-                    }
-                    data.push(item);
-                }
-            }
-            data = data.filter((obj, pos, arr) => {
-                return arr.map(mapObj => mapObj.properties.name).indexOf(obj.properties.name) == pos;
-            });
-            res.json(data);
+        //For each country
+        for (var i = 0; i < result.country_statistics.length; i++) {
+          country = result.country_statistics[i].country;
+
+          //For each state
+          for (var j = 0; j < result.country_statistics[i].states.length; j++) {
+            let state_name;
+            let state_address;
+            let latitude;
+            let longitude;
+            let confirmed = 0;
+            let deaths = 0;
+            let recovered = 0;
+            let active = 0;
+            let name = result.country_statistics[i].states[j].name;
+
+            result.country_statistics[i].states
+              .filter((city) => city.name === name)
+              .map((e) => {
+                state_name = e.name;
+                state_address = e.address;
+                latitude = e.latitude;
+                longitude = e.longitude;
+                confirmed = confirmed + parseInt(e.confirmed);
+                deaths = deaths + parseInt(e.deaths);
+                recovered = recovered + parseInt(e.recovered);
+                active = active + parseInt(e.active);
+                total_cases =
+                  parseInt(confirmed) + parseInt(deaths) + parseInt(recovered);
+              });
+
+            let item = {
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: [longitude, latitude],
+              },
+              properties: {
+                key: j,
+                country: country,
+                name: state_name,
+                address: state_address,
+                confirmed: confirmed,
+                deaths: deaths,
+                recovered: recovered,
+                active: active,
+                total_cases: total_cases,
+              },
+            };
+            data.push(item);
+          }
         }
-    })
-})
+        data = data.filter((obj, pos, arr) => {
+          return (
+            arr
+              .map((mapObj) => mapObj.properties.name)
+              .indexOf(obj.properties.name) == pos
+          );
+        });
+        res.json(data);
+      }
+    });
+});
 
 app.get("/country/:country", (req, res) => {
-    let toFind = req.params.country.toUpperCase()
-    let newResult;
-    db.collection('covid_statistics').findOne()
-    .then(results => {
+  let toFind = req.params.country.toUpperCase();
+  let newResult;
+  db.collection("covid_statistics")
+    .findOne()
+    .then((results) => {
+      // for(var i = 0; i < results.country_statistics.length; i++){
+      //     if(results.country_statistics[i].country == (/toFind/i)){
+      //         res.status(200).json(results.country_statistics[i]);
+      //     }
+      //     else{
+      //         res.json("Country not found");
+      //     }
+      //     console.log(toFind);
 
-        // for(var i = 0; i < results.country_statistics.length; i++){
-        //     if(results.country_statistics[i].country == (/toFind/i)){
-        //         res.status(200).json(results.country_statistics[i]);
-        //     }
-        //     else{
-        //         res.json("Country not found");
-        //     }
-        //     console.log(toFind);
-            
-        // };
-        
-        if(results){
+      // };
 
-            results.country_statistics.forEach(result => {
-                let countryName = result.country.toUpperCase();
+      if (results) {
+        results.country_statistics.forEach((result) => {
+          let countryName = result.country.toUpperCase();
 
-                try {
-                    if(countryName == toFind){
-                        newResult = result  
-                    }
-                  }
-                  catch(err) {
-                    console.log(err);
-                    
-                  }                
-            });
-            if(newResult != null){
-                res.status(200).json(newResult); 
-            }else{
-                res.status(500).json("Country not in our Database");
+          try {
+            if (countryName == toFind) {
+              newResult = result;
             }
+          } catch (err) {
+            console.log(err);
+          }
+        });
+        if (newResult != null) {
+          res.status(200).json(newResult);
+        } else {
+          res.status(500).json("Country not in our Database");
         }
-        else{
-            newResult = JSON.stringify("No such country")
-        }
-        
-    })
+      } else {
+        newResult = JSON.stringify("No such country");
+      }
+    });
 });
+
+app.get("/timeline/all", (req, res) => {
+  var options = {
+    url:
+      "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
+    method: "GET",
+  };
+  request(options, function (error, response, result) {
+    if (error) res.json(error);
+
+    let rows = result.split("\n");
+    //console.log(rows);
+    let mainData = {};
+    let headers = rows[0];
+    let dates = headers.split(/,(?=\S)/);
+    dates.splice(0, 4);
+    rows.splice(0, 1);
+
+    rows.forEach((row) => {
+      let cols = row.split(/,(?=\S)/);
+      let con = cols[1];
+      cols.splice(0, 4);
+      //console.log(con, cols);
+      mainData[con] = [];
+
+      cols.forEach((value, index) => {
+        let dw = {
+          cases: +value,
+          country: con,
+          date: new Date(Date.parse(dates[index])),
+        };
+        mainData[con].push(dw);
+      });
+    });
+
+    res.json(mainData)
+  });
+});
+
+app.get("/timeline/:country", (req, res) => {
+    var options = {
+      url:
+        "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
+      method: "GET",
+    };
+    request(options, function (error, response, result) {
+      if (error) res.json(error);
+  
+      let rows = result.split("\n");
+      //console.log(rows);
+      let mainData = {};
+      let headers = rows[0];
+      let dates = headers.split(/,(?=\S)/);
+      dates.splice(0, 4);
+      rows.splice(0, 1);
+  
+      rows.forEach((row) => {
+        let cols = row.split(/,(?=\S)/);
+        let con = cols[1];
+        cols.splice(0, 4);
+        //console.log(con, cols);
+        mainData[con] = [];
+  
+        cols.forEach((value, index) => {
+          let dw = {
+            cases: +value,
+            country: con,
+            date: new Date(Date.parse(dates[index])),
+          };
+          mainData[con].push(dw);
+        });
+      });  
+      res.json(mainData)
+    });
+  });
 
 app.listen(port, () => {
   console.log(`Live on http://localhost:${port}`);
