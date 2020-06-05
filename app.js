@@ -25,7 +25,7 @@ db.once("open", function (callback) {
   console.log("Database connection succeeded for covid19 Api");
 });
 
-cron.schedule("08 40 * * * *", () => {
+cron.schedule("23 59 * * * *", () => {
   let date = new Date();
   let day = date.getUTCDay();
   let year = date.getUTCFullYear();
@@ -81,9 +81,6 @@ cron.schedule("08 40 * * * *", () => {
           //console.log(results);
 
           if(results.length > 0){
-            // for(var i =0; i < results.length; i++){
-            //     console.log(results[i]);
-            // }
 
             results.forEach(result => {
                 totalActive += parseInt(result.Active);
@@ -275,9 +272,48 @@ app.get('/markers.geojson', (req, res) => {
     })
 })
 
-app.get("/", (req, res) => {
-    db.collection('covid_statistics').findOne().then((results) => {
-        res.status(200).json(results);
+app.get("/country/:country", (req, res) => {
+    let toFind = req.params.country.toUpperCase()
+    let newResult;
+    db.collection('covid_statistics').findOne()
+    .then(results => {
+
+        // for(var i = 0; i < results.country_statistics.length; i++){
+        //     if(results.country_statistics[i].country == (/toFind/i)){
+        //         res.status(200).json(results.country_statistics[i]);
+        //     }
+        //     else{
+        //         res.json("Country not found");
+        //     }
+        //     console.log(toFind);
+            
+        // };
+        
+        if(results){
+
+            results.country_statistics.forEach(result => {
+                let countryName = result.country.toUpperCase();
+
+                try {
+                    if(countryName == toFind){
+                        newResult = result  
+                    }
+                  }
+                  catch(err) {
+                    console.log(err);
+                    
+                  }                
+            });
+            if(newResult != null){
+                res.status(200).json(newResult); 
+            }else{
+                res.status(500).json("Country not in our Database");
+            }
+        }
+        else{
+            newResult = JSON.stringify("No such country")
+        }
+        
     })
 });
 
