@@ -30,9 +30,9 @@ db.once("open", function (callback) {
   console.log("Database connection succeeded for covid19 Api");
 });
 
-cron.schedule("23 59 * * * *", () => {
-  let date = new Date();
-  let day = date.getUTCDay();
+cron.schedule("09 00 * * * *", () => {
+  let date = new Date;
+  let day = date.getUTCDay() + 14;
   let year = date.getUTCFullYear();
   let month = date.getUTCMonth();
   let time =
@@ -112,7 +112,7 @@ cron.schedule("23 59 * * * *", () => {
             db.collection("covid_statistics")
               .insertOne(items)
               .then(() => {
-                console.log("inserted successfully");
+                console.log("Automatically Inserted Successfully");
               });
           }
         });
@@ -204,7 +204,7 @@ function getStats(countryObj, results) {
     recovered: recovered,
     states: statistics.sort(),
   };
-  console.log(country_statistics);
+  // console.log(country_statistics);
 
   return country_statistics;
 }
