@@ -1,23 +1,16 @@
 # Covid19 API
 
 Get International Covid-19 data
-<!-- 
-[![Programming Language](https://img.shields.io/badge/Language-Python-success?style=flat-square)](https://python.org)
-[![Framework](https://img.shields.io/badge/Framework-Django%20Rest-success?style=flat-square)](https://www.djangoproject.com/)
-![Uptime Robot status](https://img.shields.io/uptimerobot/status/m784682119-b401cf1172c170a34a076beb?style=flat-square)
-![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m784682119-b401cf1172c170a34a076beb?style=flat-square)
-[![GitHub contributors](https://img.shields.io/github/contributors/mastersam07/ncovid-19-api?color=success&style=flat-square)](https://github.com/Mastersam07/ncovid-19-api/graphs/contributors)
-![GitHub last commit](https://img.shields.io/github/last-commit/mastersam07/ncovid-19-api?style=flat-square)
-[![License](https://img.shields.io/badge/license-MIT-success.svg?style=flat-square)](https://github.com/Mastersam07/ncovid-19-api/blob/master/LICENSE) -->
+
 
 > This api is live
 >> Retrieves raw data from John Hopkins University in CSV format, and provides response in JSON
 
 
 ## Demo
-Check the `live API` <a href="#"> here</a>
+Check the `live API` <a href="https://ncovid19api.herokuapp.com/"> here</a>
 <br>
-<a href="#">Live API</a>
+<a href="https://ncovid19api.herokuapp.com/">Live API</a>
 <br>
 
 ## 💻 Requirements
@@ -36,11 +29,11 @@ Check the `live API` <a href="#"> here</a>
 
 
 ## Dependencies
-* [Node Cron](#)
-* [ExpressJS Framework](#)
-* [Mongoose](#)
-* [Cors](#)
-* [Csv Parser](#)
+* [Node Cron](https://www.npmjs.com/package/node-cron)
+* [ExpressJS Framework](https://expressjs.com/)
+* [Mongoose](https://mongoosejs.com/)
+* [Cors](https://www.npmjs.com/package/cors)
+* [Csv Parser](https://www.npmjs.com/package/csv-parser)
 
 ## Routes
 - #### / || Contains api documentation
@@ -92,22 +85,3 @@ $ npm start
 ## 🐛 Bugs/Request
 #### Encounter any problem(s)? feel free to open an issue. If you feel you could make something better, please raise a ticket on Github and I'll look into it. Pull request are also welcome.
 
-<!-- ## Showcase
-- #### ![flutter](ss/flutterLogo1.png "flutter logo") [https://github.com/Mastersam07/ncovid](https://github.com/Mastersam07/ncovid), (Flutter) by [@mastersam07](https://github.com/mastersam07)
-
-## ⭐️ License
-#### <a href="https://github.com/Mastersam07/ncovid-19-api/blob/master/LICENSE">MIT LICENSE</a>
-##### Transitively from NCDC Site, the data may not be used for commercial purposes. -->
-
-## 🤓 Developer(s)
-#### **Bolorunduro Valiant-Joshua**
-<a href="https://twitter.com/bolorundurovb"><img src="https://github.com/aritraroy/social-icons/blob/master/twitter-icon.png?raw=true" width="60"></a>
-<a href="https://linkedin.com/in/bolorundurovb/"><img src="https://github.com/aritraroy/social-icons/blob/master/linkedin-icon.png?raw=true" width="60"></a>
-<a href="https://medium.com/@bolorundurovb"><img src="https://github.com/aritraroy/social-icons/blob/master/medium-icon.png?raw=true" width="60"></a>
-<a href="https://facebook.com/bolorundurovb"><img src="https://github.com/aritraroy/social-icons/blob/master/facebook-icon.png?raw=true" width="60"></a>
-
-<!-- ## Donate
-
-> #### If you found this project or the data helpful or you learned something from the source code and want to thank me, consider buying me a cup of :coffee:
->
-> #### - [Paystack NG](https://paystack.com/pay/mastersam) -->
