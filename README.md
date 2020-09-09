@@ -1,5 +1,7 @@
 # Covid19 API
 
+[![Build Status](https://travis-ci.com/bolorundurovj/Covid-API.svg?branch=master)](https://travis-ci.com/bolorundurovj/Covid-API)
+
 Get International Covid-19 data
 
 
