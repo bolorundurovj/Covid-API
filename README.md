@@ -6,13 +6,11 @@ Get International Covid-19 data
 
 
 > This api is live
->> Retrieves raw data from John Hopkins University in CSV format, and provides response in JSON
+> Retrieves raw data from John Hopkins University in CSV format, and provides response in JSON
 
 
 ## Demo
 Check the `live API` <a href="https://ncovid19api.herokuapp.com/"> here</a>
-<br>
-<a href="https://ncovid19api.herokuapp.com/">Live API</a>
 <br>
 
 ## 💻 Requirements
