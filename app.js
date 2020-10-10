@@ -30,7 +30,7 @@ db.once("open", function (callback) {
   console.log("Database connection succeeded for covid19 Api");
 });
 
-cron.schedule("09 00 * * * *", () => {
+cron.schedule("23 59 * * * *", () => {
   let date = new Date;
   let day = date.getUTCDay() + 14;
   let year = date.getUTCFullYear();
@@ -87,7 +87,7 @@ cron.schedule("09 00 * * * *", () => {
 
           if (results.length > 0) {
             results.forEach((result) => {
-              totalActive += parseInt(result.Active);
+              totalActive = parseInt(results[i].Active !== (null || undefined || '') ? results[i].Active : '0') + totalActive;
               totalRecovered += parseInt(result.Recovered);
               totalConfirmed += parseInt(result.Confirmed);
               totalDeaths += parseInt(result.Deaths);
