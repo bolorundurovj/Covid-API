@@ -30,7 +30,7 @@ db.once("open", function (callback) {
   console.log("Database connection succeeded for covid19 Api");
 });
 
-// cron.schedule("16 49 * * * *", () => {
+cron.schedule("23 59 * * * *", () => {
   let date = new Date;
   let day = date.getDay() +11;
   let year = date.getUTCFullYear();
@@ -118,7 +118,7 @@ db.once("open", function (callback) {
           }
         });
     });
-// });
+});
 
 function getStats(countryObj, results) {
   const statistics = [];
