@@ -75,8 +75,8 @@ $ npm start
 
 ## 📸 ScreenShots
 
-<img src="/img/screenshot1.png" width="250">
-<img src="/img/screenshot2.png" width="250">
+<img src="./public/img/screenshot1.png" width="250"><br>
+<img src="./public/img/screenshot2.png" width="250">
 
 
 
