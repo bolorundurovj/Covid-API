@@ -30,9 +30,9 @@ db.once("open", function (callback) {
   console.log("Database connection succeeded for covid19 Api");
 });
 
-cron.schedule("23 59 * * * *", () => {
+// cron.schedule("16 49 * * * *", () => {
   let date = new Date;
-  let day = date.getUTCDay() + 14;
+  let day = date.getDay() +11;
   let year = date.getUTCFullYear();
   let month = date.getUTCMonth();
   let time =
@@ -87,10 +87,11 @@ cron.schedule("23 59 * * * *", () => {
 
           if (results.length > 0) {
             results.forEach((result) => {
-              totalActive = parseInt(results[i].Active !== (null || undefined || '') ? results[i].Active : '0') + totalActive;
+              totalActive = parseInt(result.Active !== undefined ? result.Active : '0') + totalActive;
               totalRecovered += parseInt(result.Recovered);
               totalConfirmed += parseInt(result.Confirmed);
               totalDeaths += parseInt(result.Deaths);
+              //console.log(i);
             });
 
             countryList.forEach((country) => {
@@ -117,7 +118,7 @@ cron.schedule("23 59 * * * *", () => {
           }
         });
     });
-});
+// });
 
 function getStats(countryObj, results) {
   const statistics = [];
@@ -202,6 +203,7 @@ function getStats(countryObj, results) {
     confirmed: confirmed,
     deaths: deaths,
     recovered: recovered,
+    active: active,
     states: statistics.sort(),
   };
   // console.log(country_statistics);
