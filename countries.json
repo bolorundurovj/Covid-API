@@ -1170,6 +1170,15 @@
       ]
   },
   {
+      "country": "Palestine",
+      "code": "PS",
+      "flag": "https://assets.hackbotone.com/images/flags/flag_palestine.png",
+      "coordinates": [
+          35.2332,
+          31.9522
+      ]
+  },
+  {
       "country": "Panama",
       "code": "PA",
       "flag": "https://assets.hackbotone.com/images/flags/flag_panama.png",
@@ -1590,15 +1599,6 @@
       "coordinates": [
           108.277199,
           14.058324
-      ]
-  },
-  {
-      "country": "West Bank and Gaza",
-      "code": "GZ",
-      "flag": "https://assets.hackbotone.com/images/flags/flag_palestine.png",
-      "coordinates": [
-          35.2332,
-          31.9522
       ]
   },
   {
