@@ -51,10 +51,10 @@ db.once('open', function (callback) {
 });
 
 cron.schedule('23 59 * * * *', () => {
-  let date = new Date();
-  let day = date.getDay() + 11;
+  let date = new Date(Date.now());
+  let day = date.getDate();
   let year = date.getUTCFullYear();
-  let month = date.getUTCMonth();
+  let month = date.getMonth();
   let time =
     date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 
