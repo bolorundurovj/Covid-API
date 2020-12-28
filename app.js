@@ -1,21 +1,41 @@
-const express = require("express");
-const request = require("request");
-const cors = require("cors");
-const mongoose = require("mongoose");
-const cron = require("node-cron");
-const fs = require("fs");
-const csv = require("csv-parser");
+const express = require('express');
+const request = require('request');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const cron = require('node-cron');
+const fs = require('fs');
+const csv = require('csv-parser');
 const path = require('path');
 
 require('dotenv').config();
 
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
+
 const app = express();
 
-const Data = require("./models/data");
-const countryList = require("./countries.json");
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: 'Covid19 API',
+      description: "An API for all the Covid19 data you'll need",
+      contact: {
+        name: 'Bolorunduro Valiant-Joshua',
+      },
+      servers: ['http://localhost:4915'],
+    },
+  },
+  apis: ['app.js'],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+
+const Data = require('./models/data');
+const countryList = require('./countries.json');
 
 app.use(cors());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const port = process.env.PORT || 4915;
 
@@ -25,41 +45,41 @@ mongoose.connect(process.env.URL, {
   useUnifiedTopology: true,
 });
 const db = mongoose.connection;
-db.on("error", console.log.bind(console, "connection error"));
-db.once("open", function (callback) {
-  console.log("Database connection succeeded for covid19 Api");
+db.on('error', console.log.bind(console, 'connection error'));
+db.once('open', function (callback) {
+  console.log('Database connection succeeded for covid19 Api');
 });
 
-cron.schedule("23 59 * * * *", () => {
-  let date = new Date;
-  let day = date.getDay() +11;
+cron.schedule('23 59 * * * *', () => {
+  let date = new Date();
+  let day = date.getDay() + 11;
   let year = date.getUTCFullYear();
   let month = date.getUTCMonth();
   let time =
-    date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 
   let previousDay = day - 1;
   let correctMonth = month + 1;
 
-  console.log("Date: " + date);
-  console.log("Day: " + day);
-  console.log("Year: " + year);
-  console.log("Month: " + month);
-  console.log("Time: " + time);
-  console.log("Previous Day: " + previousDay);
+  console.log('Date: ' + date);
+  console.log('Day: ' + day);
+  console.log('Year: ' + year);
+  console.log('Month: ' + month);
+  console.log('Time: ' + time);
+  console.log('Previous Day: ' + previousDay);
 
   if (previousDay < 10) {
-    previousDay = "0" + previousDay;
-    console.log("Day Checked: " + previousDay);
+    previousDay = '0' + previousDay;
+    console.log('Day Checked: ' + previousDay);
   }
   if (correctMonth < 10) {
-    correctMonth = "0" + correctMonth;
-    console.log("Month: " + correctMonth);
+    correctMonth = '0' + correctMonth;
+    console.log('Month: ' + correctMonth);
   }
 
-  let newDate = correctMonth + "-" + previousDay + "-" + year;
+  let newDate = correctMonth + '-' + previousDay + '-' + year;
 
-  let fileName = newDate + ".csv";
+  let fileName = newDate + '.csv';
 
   const file = fs.createWriteStream(fileName);
 
@@ -74,20 +94,22 @@ cron.schedule("23 59 * * * *", () => {
     .get(
       `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/${fileName}`
     )
-    .on("error", function (err) {
+    .on('error', function (err) {
       console.error(err);
     })
     .pipe(file)
-    .on("finish", () => {
+    .on('finish', () => {
       fs.createReadStream(fileName)
         .pipe(csv())
-        .on("data", (data) => results.push(data))
-        .on("end", () => {
+        .on('data', (data) => results.push(data))
+        .on('end', () => {
           //console.log(results);
 
           if (results.length > 0) {
             results.forEach((result) => {
-              totalActive = parseInt(result.Active !== undefined ? result.Active : '0') + totalActive;
+              totalActive =
+                parseInt(result.Active !== undefined ? result.Active : '0') +
+                totalActive;
               totalRecovered += parseInt(result.Recovered);
               totalConfirmed += parseInt(result.Confirmed);
               totalDeaths += parseInt(result.Deaths);
@@ -109,11 +131,11 @@ cron.schedule("23 59 * * * *", () => {
               country_statistics: data.sort(),
             };
 
-            db.collection("covid_statistics").deleteOne({});
-            db.collection("covid_statistics")
+            db.collection('covid_statistics').deleteOne({});
+            db.collection('covid_statistics')
               .insertOne(items)
               .then(() => {
-                console.log("Automatically Inserted Successfully");
+                console.log('Automatically Inserted Successfully');
               });
           }
         });
@@ -211,16 +233,38 @@ function getStats(countryObj, results) {
   return country_statistics;
 }
 
-app.get("/all", (req, res) => {
-  db.collection("covid_statistics")
+/**
+ * @swagger
+ *
+ * /all:
+ *  get:
+ *    description: Get the world data, as well as every country data
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ */
+
+app.get('/all', (req, res) => {
+  db.collection('covid_statistics')
     .findOne()
     .then((results) => {
       res.status(200).json(results);
     });
 });
 
-app.get("/geojson", (req, res) => {
-  db.collection("covid_statistics")
+/**
+ * @swagger
+ *
+ * /geojson:
+ *  get:
+ *    description: Get data in GeoJSON format, which is optimised for populating maps
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ */
+
+app.get('/geojson', (req, res) => {
+  db.collection('covid_statistics')
     .findOne()
     .then((results) => {
       if (results) {
@@ -261,9 +305,9 @@ app.get("/geojson", (req, res) => {
               });
 
             let item = {
-              type: "Feature",
+              type: 'Feature',
               geometry: {
-                type: "Point",
+                type: 'Point',
                 coordinates: [longitude, latitude],
               },
               properties: {
@@ -293,10 +337,25 @@ app.get("/geojson", (req, res) => {
     });
 });
 
-app.get("/country/:country", (req, res) => {
+/**
+ * @swagger
+ *
+ * /country/{country}:
+ *  get:
+ *    description: Get the latest update on each country
+ *    parameters:
+ *       - name: country
+ *         description: Country's name
+ *         type: string
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ */
+
+app.get('/country/:country', (req, res) => {
   let toFind = req.params.country.toUpperCase();
   let newResult;
-  db.collection("covid_statistics")
+  db.collection('covid_statistics')
     .findOne()
     .then((results) => {
       // for(var i = 0; i < results.country_statistics.length; i++){
@@ -325,24 +384,35 @@ app.get("/country/:country", (req, res) => {
         if (newResult != null) {
           res.status(200).json(newResult);
         } else {
-          res.status(500).json("Country not in our Database");
+          res.status(500).json('Country not in our Database');
         }
       } else {
-        newResult = JSON.stringify("No such country");
+        newResult = JSON.stringify('No such country');
       }
     });
 });
 
-app.get("/timeline/all", (req, res) => {
+/**
+ * @swagger
+ *
+ * /timeline/all:
+ *  get:
+ *    description: Get the timeline of the daily cases for all countries
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ */
+
+app.get('/timeline/all', (req, res) => {
   var options = {
     url:
-      "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
-    method: "GET",
+      'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv',
+    method: 'GET',
   };
   request(options, function (error, response, result) {
     if (error) res.json(error);
 
-    let rows = result.split("\n");
+    let rows = result.split('\n');
     //console.log(rows);
     let mainData = {};
     let headers = rows[0];
@@ -371,20 +441,35 @@ app.get("/timeline/all", (req, res) => {
   });
 });
 
-app.get("/timeline/:country", (req, res) => {
+/**
+ * @swagger
+ *
+ * /timeline/{country}:
+ *  get:
+ *    description: Get the timeline of daily cases in a country from January 2020 to date
+ *    parameters:
+ *       - name: country
+ *         description: Country's name
+ *         type: string
+ *    responses:
+ *      '200':
+ *        description: A successful response
+ */
+
+app.get('/timeline/:country', (req, res) => {
   let countryName = req.params.country.toUpperCase();
   console.log(countryName);
 
   let timeline;
   var options = {
     url:
-      "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",
-    method: "GET",
+      'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv',
+    method: 'GET',
   };
   request(options, function (error, response, result) {
     if (error) res.json(error);
 
-    let rows = result.split("\n");
+    let rows = result.split('\n');
     //console.log(rows);
     let mainData = {};
     let headers = rows[0];
@@ -418,7 +503,7 @@ app.get("/timeline/:country", (req, res) => {
     if (timeline != null) {
       res.status(200).json(timeline);
     } else {
-      res.status(500).json("Country not in our Database");
+      res.status(500).json('Country not in our Database');
     }
   });
 });
