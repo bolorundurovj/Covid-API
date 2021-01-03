@@ -371,7 +371,10 @@ app.get('/country/:country', (req, res) => {
 
       if (results) {
         results.country_statistics.forEach((result) => {
-          let countryName = result.country.toUpperCase();
+          let countryName;
+          if(result.country){
+            countryName = result.country.toUpperCase();
+          }
 
           try {
             if (countryName == toFind) {
