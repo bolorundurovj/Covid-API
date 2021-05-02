@@ -35,40 +35,6 @@ define({ "api": [
     "name": "Get_All_Countries",
     "group": "Data",
     "description": "<p>Get the world data, as well as every country data</p>",
-    "parameter": {
-      "fields": {
-        "Url Parameters": [
-          {
-            "group": "Url Parameters",
-            "type": "String",
-            "optional": false,
-            "field": "agentId",
-            "description": "<p>Agents unique ID.</p>"
-          }
-        ],
-        "Query Parameters": [
-          {
-            "group": "Query Parameters",
-            "type": "string",
-            "allowedValues": [
-              "\"day\"",
-              "\"week\"",
-              "\"month\""
-            ],
-            "optional": false,
-            "field": "timeFrame",
-            "description": "<p>Query Parameter(day,week,month).</p>"
-          },
-          {
-            "group": "Query Parameters",
-            "type": "String",
-            "optional": false,
-            "field": "clientName",
-            "description": "<p>Query Parameter to filter by client name.</p>"
-          }
-        ]
-      }
-    },
     "success": {
       "fields": {
         "200": [

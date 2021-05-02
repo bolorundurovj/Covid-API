@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "npm run fire && npm run generate:docs",
+    "start": "npm run generate:docs && npm run fire",
     "fire": "node app.js",
     "test": "echo \"Message: no test specified\" && exit 0",
     "generate:docs": "apidoc -i ./ -e node_modules -o ./docs"
