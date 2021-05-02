@@ -4,12 +4,15 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Message: no test specified\" && exit 0"
+    "start": "npm run fire && npm run generate:docs",
+    "fire": "node app.js",
+    "test": "echo \"Message: no test specified\" && exit 0",
+    "generate:docs": "apidoc -i ./ -e node_modules -o ./docs"
   },
   "author": "Bolorunduro Valiant-Joshua",
   "license": "MIT",
   "dependencies": {
+    "apidoc": "^0.27.1",
     "cors": "^2.8.5",
     "csv-parser": "^2.3.2",
     "dotenv": "^8.2.0",

@@ -1,0 +1,7 @@
+{
+  "name": "NCovid19 API",
+  "version": "1.0.0",
+  "description": "API documentation for a comprehensive covid19 data API",
+  "title": "Covid API",
+  "url": "https://ncovid19api.herokuapp.com/"
+}
