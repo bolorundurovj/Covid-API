@@ -223,10 +223,6 @@ function getStats(countryObj, results) {
  *
  * @apiDescription Get the world data, as well as every country data
  *
- * @apiParam (Url Parameters) {String} agentId Agents unique ID.
- * @apiParam (Query Parameters) {string="day","week","month"} timeFrame Query Parameter(day,week,month).
- * @apiParam (Query Parameters) {String} clientName Query Parameter to filter by client name.
- *
  * @apiSuccess (200) {Object} response  Response Object containing desired information.
  * @apiSuccess (200) {Object} response.pagination  Object containning pagination information.
  * @apiSuccess (200) {Array} response.data  Array containing client objects.
