@@ -18,7 +18,6 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'docs')));
 
-
 const port = process.env.PORT || 4915;
 
 mongoose.connect(process.env.URL, {
@@ -84,7 +83,6 @@ cron.schedule('23 59 * * * *', () => {
         .pipe(csv())
         .on('data', (data) => results.push(data))
         .on('end', () => {
-
           if (results.length > 0) {
             results.forEach((result) => {
               totalActive =
@@ -865,7 +863,6 @@ app.get('/all', (req, res) => {
     });
 });
 
-
 /**
  * @route     GET /geojson
  * @access    Public
@@ -1005,7 +1002,6 @@ app.get('/geojson', (req, res) => {
     });
 });
 
-
 /**
  * @route     GET /country/:country
  * @access    Public
@@ -1019,7 +1015,7 @@ app.get('/geojson', (req, res) => {
  * @apiGroup Data
  *
  * @apiDescription Get the latest update on a country
- * 
+ *
  * @apiParam (Url Parameters) {String} country Country Name.
  *
  * @apiSuccess (200) {Array} response  Array containing data objects.
@@ -1049,7 +1045,7 @@ app.get('/geojson', (req, res) => {
  *            "recovered": "3535"
  *        }
  *    ]
-*  }
+ *  }
  */
 
 app.get('/country/:country', (req, res) => {
@@ -1061,7 +1057,7 @@ app.get('/country/:country', (req, res) => {
       if (results) {
         results.country_statistics.forEach((result) => {
           let countryName;
-          if(result.country){
+          if (result.country) {
             countryName = result.country.toUpperCase();
           }
 
@@ -1083,7 +1079,6 @@ app.get('/country/:country', (req, res) => {
       }
     });
 });
-
 
 /**
  * @route     GET /timeline/all
@@ -1189,7 +1184,7 @@ app.get('/timeline/all', (req, res) => {
  * @apiGroup Data
  *
  * @apiDescription Get the timeline of daily cases in a country from January 2020 to date
- * 
+ *
  * @apiParam (Url Parameters) {String} country Country Name.
  *
  * @apiSuccess (200) {Array} response  Array containing data objects.
