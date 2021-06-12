@@ -4,10 +4,13 @@ const path = require('path');
 
 require('dotenv').config();
 
-const {connectDB} = require('./utils') 
+const {connectDB, runCronJob} = require('./utils') 
 
 //Connect to database
 connectDB();
+
+//Run cron jobs
+runCronJob()
 
 const app = express();
 
