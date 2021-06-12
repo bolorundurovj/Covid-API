@@ -4,9 +4,12 @@ const path = require('path');
 
 require('dotenv').config();
 
-const app = express();
+const {connectDB} = require('./utils') 
 
-const Data = require('./models/data');
+//Connect to database
+connectDB();
+
+const app = express();
 
 
 //Route files

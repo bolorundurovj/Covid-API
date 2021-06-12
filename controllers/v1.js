@@ -5,18 +5,18 @@ const fs = require('fs');
 const csv = require('csv-parser');
 
 const countryList = require('../countries.json');
+const { connectDB } = require('../utils');
 
-mongoose.connect(process.env.URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-const db = mongoose.connection;
-db.on('error', console.log.bind(console, 'connection error'));
-db.once('open', function (callback) {
-  console.log('Database connection succeeded for covid19 Api');
-});
+let db;
+connectDB()
+  .then((d) => {
+    db = d.connection;
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
-cron.schedule('23 59 * * * *', () => {
+cron.schedule('09 52 * * * *', () => {
   let date = new Date(Date.now());
   let day = date.getDate();
   let year = date.getUTCFullYear();
