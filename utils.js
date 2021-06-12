@@ -3,6 +3,7 @@ const cron = require('node-cron');
 const fs = require('fs');
 const csv = require('csv-parser');
 const request = require('request');
+const Case = require('./models/Case');
 
 const countryList = require('./countries.json');
 
@@ -27,7 +28,7 @@ const runCronJob = async () => {
     .catch((err) => {
       console.log(err);
     });
-  cron.schedule('10 04 * * * *', () => {
+  cron.schedule('23 59 * * * *', () => {
     let date = new Date(Date.now());
     let day = date.getDate();
     let year = date.getUTCFullYear();
@@ -67,13 +68,34 @@ const runCronJob = async () => {
         fs.createReadStream(fileName)
           .pipe(csv())
           .on('data', (data) => results.push(data))
-          .on('end', () => {
+          .on('end', async () => {
             if (results.length > 0) {
+              const mappedResults = results.map((x) => {
+                return {
+                  country: x.Country_Region,
+                  state: x.Province_State,
+                  stateCountry: x.Combined_Key,
+                  lastUpdated: x.Last_Update,
+                  activeCases: Number(x.Active),
+                  confirmedCases: Number(x.Confirmed),
+                  fatalCases: Number(x.Deaths),
+                  recoveredCases: Number(x.Recovered),
+                  incidentRate: Number(x.Incident_Rate),
+                  fatalityRatio: Number(x.Case_Fatality_Ratio),
+                  location: {
+                    coordinates: [Number(x.Long_), Number(x.Lat)],
+                  },
+                };
+              });
+              await Case.deleteMany({});
+              await Case.insertMany(mappedResults).then(() => {
+                  console.log(`Inserted Data for V2+`);
+              })
               results.forEach((result) => {
                 totalActive =
                   parseInt(result.Active !== undefined ? result.Active : '0') +
                   totalActive;
-                totalRecovered += parseInt(result.Recovered);
+                totalRecovered += +totalRecovered || 0;
                 totalConfirmed += parseInt(result.Confirmed);
                 totalDeaths += parseInt(result.Deaths);
               });
