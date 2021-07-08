@@ -28,7 +28,7 @@ const runCronJob = async () => {
     .catch((err) => {
       console.log(err);
     });
-  cron.schedule('20 11 * * * *', () => {
+  cron.schedule('23 59 * * * *', () => {
     let date = new Date(Date.now());
     let day = date.getDate();
     let year = date.getUTCFullYear();
