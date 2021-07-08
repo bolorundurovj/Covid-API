@@ -34,6 +34,10 @@ const caseSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    newCases: {
+      type: Number,
+      default: 0,
+    },
     incidentRate: {
       type: Number,
       default: 0,
