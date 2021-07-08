@@ -28,7 +28,7 @@ const runCronJob = async () => {
     .catch((err) => {
       console.log(err);
     });
-  cron.schedule('19 40 * * * *', () => {
+  cron.schedule('20 11 * * * *', () => {
     let date = new Date(Date.now());
     let day = date.getDate();
     let year = date.getUTCFullYear();
@@ -134,6 +134,7 @@ const runCronJob = async () => {
               });
 
               mappedResults.forEach(x => {
+                console.log(dayBeforePreviousDaysData[0].stateCountry);
                 x.newCases = (x.confirmedCases - dayBeforePreviousDaysData.find(y => y.stateCountry == x.stateCountry)[`confirmedCases`]);
               });
               await Case.deleteMany({});
@@ -141,12 +142,10 @@ const runCronJob = async () => {
                 console.log(`Inserted Data for V2+`);
               });
               results.forEach((result) => {
-                totalActive =
-                  parseInt(result.Active !== undefined ? result.Active : '0') +
-                  totalActive;
-                totalRecovered += +totalRecovered || 0;
-                totalConfirmed += parseInt(result.Confirmed);
-                totalDeaths += parseInt(result.Deaths);
+                totalActive += +result.Active || 0
+                totalRecovered += +result.Recovered || 0;
+                totalConfirmed += +result.Confirmed || 0;
+                totalDeaths += +result.Deaths || 0;
               });
 
               countryList.forEach((country) => {
@@ -168,7 +167,7 @@ const runCronJob = async () => {
               db.collection('covid_statistics')
                 .insertOne(items)
                 .then(() => {
-                  console.log('Automatically Inserted Successfully');
+                  console.log('Automatically Inserted Successfully for V1');
                 });
             }
           });
