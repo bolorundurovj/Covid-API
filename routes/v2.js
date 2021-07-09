@@ -7,6 +7,51 @@ const { getWorldStats, getAllCountriesStats, getSingleCountryStats, getAllCountr
 router.route('/world-stats').get(getWorldStats);
 router.route('/all-countries-stats').get(getAllCountriesStats);
 router.route('/country-stats/:country').get(getSingleCountryStats);
+
+/**
+ * @route     GET /all-countries-timeline
+ * @access    Public
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * For API Documentation
+ * @api {get} /all-countries-timeline Get Covid Timeline For All Countries
+ * @apiVersion 2.0.0
+ * @apiName Get Covid Timeline For All Countries
+ * @apiGroup V2
+ *
+ * @apiDescription Get the timeline of the daily cases for all countries
+ *
+ * @apiSuccess (200) {Array} response  Array containing data objects.
+ * @apiSuccessExample {json} Success-Response Example:
+ * HTTP/1.1 200 OK
+ * {
+ *    "Afghanistan": [
+ *         {
+ *         "cases": 0,
+ *         "country": "Afghanistan",
+ *         "date": "2020-01-21T23:00:00.000Z"
+ *         },
+ *         {
+ *         "cases": 2,
+ *         "country": "Afghanistan",
+ *         "date": "2020-01-22T23:00:00.000Z"
+ *         },
+ *       ],
+ *    "Cuba": [
+ *         {
+ *         "cases": 0,
+ *         "country": "Cuba",
+ *         "date": "2020-01-21T23:00:00.000Z"
+ *         },
+ *         {
+ *         "cases": 2,
+ *         "country": "Cuba",
+ *         "date": "2020-01-22T23:00:00.000Z"
+ *         },
+ *       ],
+ * }
+ */
 router.route('/all-countries-timeline').get(getAllCountriesTimeline);
 
 /**

@@ -265,5 +265,36 @@ define({ "api": [
     },
     "filename": "./routes/v2.js",
     "groupTitle": "V2"
+  },
+  {
+    "type": "get",
+    "url": "/all-countries-timeline",
+    "title": "Get Covid Timeline For All Countries",
+    "version": "1.0.0",
+    "name": "Get_Covid_Timeline_For_All_Countries",
+    "group": "V2",
+    "description": "<p>Get the timeline of the daily cases for all countries</p>",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "response",
+            "description": "<p>Array containing data objects.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response Example:",
+          "content": "HTTP/1.1 200 OK\n{\n   \"Afghanistan\": [\n        {\n        \"cases\": 0,\n        \"country\": \"Afghanistan\",\n        \"date\": \"2020-01-21T23:00:00.000Z\"\n        },\n        {\n        \"cases\": 2,\n        \"country\": \"Afghanistan\",\n        \"date\": \"2020-01-22T23:00:00.000Z\"\n        },\n      ],\n   \"Cuba\": [\n        {\n        \"cases\": 0,\n        \"country\": \"Cuba\",\n        \"date\": \"2020-01-21T23:00:00.000Z\"\n        },\n        {\n        \"cases\": 2,\n        \"country\": \"Cuba\",\n        \"date\": \"2020-01-22T23:00:00.000Z\"\n        },\n      ],\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./routes/v2.js",
+    "groupTitle": "V2"
   }
 ] });
