@@ -1,11 +1,10 @@
 //Get World Stats X
 //Get All Country Stats X
-//Get Country Stats
+//Get Country Stats X
 //Get Country TimeLine
-//Get Country Geodata
-//Get World Geodata
 //Get World Timeline
 
+const request = require('request');
 const Case = require('../../models/Case');
 
 exports.getWorldStats = async (req, res) => {
@@ -70,7 +69,7 @@ exports.getAllCountriesStats = async (req, res) => {
 
 exports.getSingleCountryStats = async (req, res, next) => {
   let { country } = req.params;
-  country = `^${country}`
+  country = `^${country}`;
   country = new RegExp(String(country), 'i');
   const response = await Case.aggregate([
     {
@@ -91,3 +90,47 @@ exports.getSingleCountryStats = async (req, res, next) => {
 
   return res.status(200).json(response);
 };
+
+exports.getWorldTimeline = async (req, res, next) => {
+  const response = await getTimelineData;
+  res.status(200).json(response);
+};
+
+const getTimelineData = new Promise((resolve, reject) => {
+  const options = {
+    url: 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv',
+    method: 'GET',
+  };
+  request(options, function (error, response, result) {
+    if (error) {
+      return reject(error);
+    }
+    try {
+      let rows = result.split('\n');
+      let mainData = {};
+      let headers = rows[0];
+      let dates = headers.split(/,(?=\S)/);
+      dates.splice(0, 4);
+      rows.splice(0, 1);
+
+      rows.forEach((row) => {
+        let cols = row.split(/,(?=\S)/);
+        let con = cols[1];
+        cols.splice(0, 4);
+        mainData[con] = [];
+
+        cols.forEach((value, index) => {
+          let dw = {
+            cases: +value,
+            country: con,
+            date: new Date(Date.parse(dates[index])),
+          };
+          mainData[con].push(dw);
+        });
+      });
+      resolve(mainData);
+    } catch (err) {
+      reject(err);
+    }
+  });
+});
