@@ -3,6 +3,7 @@
 //Get Country Stats X
 //Get Country TimeLine
 //Get World Timeline
+//Get All Countries Timeline X
 
 const request = require('request');
 const Case = require('../../models/Case');
@@ -91,8 +92,18 @@ exports.getSingleCountryStats = async (req, res, next) => {
   return res.status(200).json(response);
 };
 
-exports.getWorldTimeline = async (req, res, next) => {
+exports.getAllCountriesTimeline = async (req, res, next) => {
   const response = await getTimelineData;
+  res.status(200).json(response);
+};
+
+exports.getSingleCountryTimeline = async (req, res, next) => {
+  let { country } = req.params;
+  //   country = `^${country}`;
+  //   country = new RegExp(String(country), 'i');
+  country = country.toLowerCase();
+  let response = await getTimelineData;
+  response = response[country];
   res.status(200).json(response);
 };
 
@@ -116,6 +127,7 @@ const getTimelineData = new Promise((resolve, reject) => {
       rows.forEach((row) => {
         let cols = row.split(/,(?=\S)/);
         let con = cols[1];
+        con = String(con).toLowerCase();
         cols.splice(0, 4);
         mainData[con] = [];
 
