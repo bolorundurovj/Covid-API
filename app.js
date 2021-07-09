@@ -17,6 +17,7 @@ const app = express();
 
 //Route files
 const v1 = require('./routes/v1');
+const v2 = require('./routes/v2');
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -27,6 +28,7 @@ const port = process.env.PORT || 4915;
 
 //Mount routers
 app.use('/', v1);
+app.use('/v2', v2);
 
 
 
