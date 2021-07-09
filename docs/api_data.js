@@ -235,24 +235,73 @@ define({ "api": [
         "200": [
           {
             "group": "200",
-            "type": "Object",
+            "type": "string",
             "optional": false,
-            "field": "response",
-            "description": "<p>Response Object containing desired information.</p>"
+            "field": "country",
+            "description": "<p>Country Name.</p>"
           },
           {
             "group": "200",
-            "type": "Object",
+            "type": "number",
             "optional": false,
-            "field": "response.pagination",
-            "description": "<p>Object containning pagination information.</p>"
+            "field": "activeCases",
+            "description": "<p>Total Active Cases.</p>"
           },
           {
             "group": "200",
-            "type": "Array",
+            "type": "number",
             "optional": false,
-            "field": "response.data",
-            "description": "<p>Array containing client objects.</p>"
+            "field": "confirmedCases",
+            "description": "<p>Total Confirmed Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "recoveredCases",
+            "description": "<p>Total Recovered Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "fatalCases",
+            "description": "<p>Total Deaths.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "newCases",
+            "description": "<p>Total New Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "fatalityRatio",
+            "description": "<p>Ratio of Deaths to Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "incidentRate",
+            "description": "<p>Rate at which cases are occuring.</p>"
+          },
+          {
+            "group": "200",
+            "type": "date",
+            "optional": false,
+            "field": "lastUpdated",
+            "description": "<p>Date of last entry.</p>"
+          },
+          {
+            "group": "200",
+            "type": "object",
+            "optional": false,
+            "field": "location",
+            "description": "<p>GeoJSON Location.</p>"
           }
         ]
       },
@@ -293,10 +342,80 @@ define({ "api": [
         "200": [
           {
             "group": "200",
-            "type": "Array",
+            "type": "string",
             "optional": false,
-            "field": "response",
-            "description": "<p>Array containing data objects.</p>"
+            "field": "country",
+            "description": "<p>Country Name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "string",
+            "optional": false,
+            "field": "stateCountry",
+            "description": "<p>Country Name w/o State/Province.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "activeCases",
+            "description": "<p>Total Active Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "confirmedCases",
+            "description": "<p>Total Confirmed Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "recoveredCases",
+            "description": "<p>Total Recovered Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "fatalCases",
+            "description": "<p>Total Deaths.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "newCases",
+            "description": "<p>Total New Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "fatalityRatio",
+            "description": "<p>Ratio of Deaths to Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "incidentRate",
+            "description": "<p>Rate at which cases are occuring.</p>"
+          },
+          {
+            "group": "200",
+            "type": "date",
+            "optional": false,
+            "field": "lastUpdated",
+            "description": "<p>Date of last entry.</p>"
+          },
+          {
+            "group": "200",
+            "type": "object",
+            "optional": false,
+            "field": "location",
+            "description": "<p>GeoJSON Location.</p>"
           }
         ]
       },
@@ -339,7 +458,7 @@ define({ "api": [
             "group": "200",
             "type": "Array",
             "optional": false,
-            "field": "response",
+            "field": "_",
             "description": "<p>Array containing data objects.</p>"
           }
         ]
@@ -368,10 +487,10 @@ define({ "api": [
         "200": [
           {
             "group": "200",
-            "type": "Array",
+            "type": "Object",
             "optional": false,
-            "field": "response",
-            "description": "<p>Array containing data objects.</p>"
+            "field": "_",
+            "description": "<p>Array containing data arrays.</p>"
           }
         ]
       },
@@ -399,24 +518,59 @@ define({ "api": [
         "200": [
           {
             "group": "200",
-            "type": "Object",
+            "type": "number",
             "optional": false,
-            "field": "response",
-            "description": "<p>Response Object containing desired information.</p>"
+            "field": "activeCases",
+            "description": "<p>Total Active Cases.</p>"
           },
           {
             "group": "200",
-            "type": "Object",
+            "type": "number",
             "optional": false,
-            "field": "response.pagination",
-            "description": "<p>Object containning pagination information.</p>"
+            "field": "confirmedCases",
+            "description": "<p>Total Confirmed Cases.</p>"
           },
           {
             "group": "200",
-            "type": "Array",
+            "type": "number",
             "optional": false,
-            "field": "response.data",
-            "description": "<p>Array containing client objects.</p>"
+            "field": "recoveredCases",
+            "description": "<p>Total Recovered Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "fatalCases",
+            "description": "<p>Total Deaths.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "newCases",
+            "description": "<p>Total New Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "fatalityRatio",
+            "description": "<p>Ratio of Deaths to Cases.</p>"
+          },
+          {
+            "group": "200",
+            "type": "number",
+            "optional": false,
+            "field": "incidentRate",
+            "description": "<p>Rate at which cases are occuring.</p>"
+          },
+          {
+            "group": "200",
+            "type": "date",
+            "optional": false,
+            "field": "lastUpdated",
+            "description": "<p>Date of last entry.</p>"
           }
         ]
       },

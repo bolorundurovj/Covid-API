@@ -22,9 +22,14 @@ const {
  *
  * @apiDescription Get worldwide stats
  *
- * @apiSuccess (200) {Object} response  Response Object containing desired information.
- * @apiSuccess (200) {Object} response.pagination  Object containning pagination information.
- * @apiSuccess (200) {Array} response.data  Array containing client objects.
+ * @apiSuccess (200) {number} activeCases  Total Active Cases.
+ * @apiSuccess (200) {number} confirmedCases  Total Confirmed Cases.
+ * @apiSuccess (200) {number} recoveredCases  Total Recovered Cases.
+ * @apiSuccess (200) {number} fatalCases  Total Deaths.
+ * @apiSuccess (200) {number} newCases  Total New Cases.
+ * @apiSuccess (200) {number} fatalityRatio  Ratio of Deaths to Cases.
+ * @apiSuccess (200) {number} incidentRate  Rate at which cases are occuring.
+ * @apiSuccess (200) {date} lastUpdated  Date of last entry.
  * @apiSuccessExample {json} Success-Response Example:
  * HTTP/1.1 200 OK
  * {
@@ -56,9 +61,16 @@ router.route('/world-stats').get(getWorldStats);
  *
  * @apiDescription Get every country data
  *
- * @apiSuccess (200) {Object} response  Response Object containing desired information.
- * @apiSuccess (200) {Object} response.pagination  Object containning pagination information.
- * @apiSuccess (200) {Array} response.data  Array containing client objects.
+ * @apiSuccess (200) {string} country  Country Name.
+ * @apiSuccess (200) {number} activeCases  Total Active Cases.
+ * @apiSuccess (200) {number} confirmedCases  Total Confirmed Cases.
+ * @apiSuccess (200) {number} recoveredCases  Total Recovered Cases.
+ * @apiSuccess (200) {number} fatalCases  Total Deaths.
+ * @apiSuccess (200) {number} newCases  Total New Cases.
+ * @apiSuccess (200) {number} fatalityRatio  Ratio of Deaths to Cases.
+ * @apiSuccess (200) {number} incidentRate  Rate at which cases are occuring.
+ * @apiSuccess (200) {date} lastUpdated  Date of last entry.
+ * @apiSuccess (200) {object} location  GeoJSON Location.
  * @apiSuccessExample {json} Success-Response Example:
  * HTTP/1.1 200 OK
  * [
@@ -120,7 +132,17 @@ router.route('/all-countries-stats').get(getAllCountriesStats);
  *
  * @apiParam (Url Parameters) {String} country Country Name.
  *
- * @apiSuccess (200) {Array} response  Array containing data objects.
+ * @apiSuccess (200) {string} country  Country Name.
+ * @apiSuccess (200) {string} stateCountry  Country Name w/o State/Province.
+ * @apiSuccess (200) {number} activeCases  Total Active Cases.
+ * @apiSuccess (200) {number} confirmedCases  Total Confirmed Cases.
+ * @apiSuccess (200) {number} recoveredCases  Total Recovered Cases.
+ * @apiSuccess (200) {number} fatalCases  Total Deaths.
+ * @apiSuccess (200) {number} newCases  Total New Cases.
+ * @apiSuccess (200) {number} fatalityRatio  Ratio of Deaths to Cases.
+ * @apiSuccess (200) {number} incidentRate  Rate at which cases are occuring.
+ * @apiSuccess (200) {date} lastUpdated  Date of last entry.
+ * @apiSuccess (200) {object} location  GeoJSON Location.
  * @apiSuccessExample {json} Success-Response Example:
  * HTTP/1.1 200 OK
  *    [
@@ -162,7 +184,7 @@ router.route('/country-stats/:country').get(getSingleCountryStats);
  *
  * @apiDescription Get the timeline of the daily cases for all countries
  *
- * @apiSuccess (200) {Array} response  Array containing data objects.
+ * @apiSuccess (200) {Object} _  Array containing data arrays.
  * @apiSuccessExample {json} Success-Response Example:
  * HTTP/1.1 200 OK
  * {
@@ -210,7 +232,7 @@ router.route('/all-countries-timeline').get(getAllCountriesTimeline);
  *
  * @apiParam (Url Parameters) {String} country Country Name.
  *
- * @apiSuccess (200) {Array} response  Array containing data objects.
+ * @apiSuccess (200) {Array} _  Array containing data objects.
  * @apiSuccessExample {json} Success-Response Example:
  * HTTP/1.1 200 OK
  *    [
