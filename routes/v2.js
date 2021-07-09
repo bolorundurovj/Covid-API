@@ -8,6 +8,38 @@ const {
   getSingleCountryTimeline,
 } = require('../controllers/v2');
 
+/**
+ * @route     GET /world-stats
+ * @access    Public
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * For API Documentation
+ * @api {get} /world-stats Get World Stats
+ * @apiVersion 2.0.0
+ * @apiName Get World Stats
+ * @apiGroup V2
+ *
+ * @apiDescription Get worldwide stats
+ *
+ * @apiSuccess (200) {Object} response  Response Object containing desired information.
+ * @apiSuccess (200) {Object} response.pagination  Object containning pagination information.
+ * @apiSuccess (200) {Array} response.data  Array containing client objects.
+ * @apiSuccessExample {json} Success-Response Example:
+ * HTTP/1.1 200 OK
+ * {
+ *    "activeCases": 51988932,
+ *    "confirmedCases": 369687855,
+ *    "recoveredCases": 243394199,
+ *    "fatalCases": 7994906,
+ *    "newCases": 463849,
+ *    "fatalityRatio": 3.275939362744284,
+ *    "incidentRate": 405.2162807500837,
+ *    "lastUpdated": "2021-07-08T03:21:26.000Z",
+ *    "subGroups": 7974
+ *}
+ */
+
 router.route('/world-stats').get(getWorldStats);
 
 /**

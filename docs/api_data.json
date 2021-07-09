@@ -303,7 +303,7 @@
       "examples": [
         {
           "title": "Success-Response Example:",
-          "content": "HTTP/1.1 200 OK\n{\n   [\n      {\n          \"location\": {\n              \"type\": \"Point\",\n              \"coordinates\": [\n                  8.6753,\n                  9.082\n              ]\n          },\n          \"state\": \"\",\n          \"stateCountry\": \"Nigeria\",\n          \"activeCases\": 1580,\n          \"confirmedCases\": 168110,\n          \"fatalCases\": 2122,\n          \"recoveredCases\": 164408,\n          \"newCases\": 0,\n          \"incidentRate\": 81.551536241314,\n          \"fatalityRatio\": 1.2622687526024627,\n          \"country\": \"Nigeria\",\n          \"lastUpdated\": \"2021-07-08T03:21:26.000Z\"\n      },\n  ]\n }",
+          "content": "HTTP/1.1 200 OK\n   [\n      {\n          \"location\": {\n              \"type\": \"Point\",\n              \"coordinates\": [\n                  8.6753,\n                  9.082\n              ]\n          },\n          \"state\": \"\",\n          \"stateCountry\": \"Nigeria\",\n          \"activeCases\": 1580,\n          \"confirmedCases\": 168110,\n          \"fatalCases\": 2122,\n          \"recoveredCases\": 164408,\n          \"newCases\": 0,\n          \"incidentRate\": 81.551536241314,\n          \"fatalityRatio\": 1.2622687526024627,\n          \"country\": \"Nigeria\",\n          \"lastUpdated\": \"2021-07-08T03:21:26.000Z\"\n      },\n  ]",
           "type": "json"
         }
       ]
@@ -347,7 +347,7 @@
       "examples": [
         {
           "title": "Success-Response Example:",
-          "content": "HTTP/1.1 200 OK\n{\n   [\n       {\n            \"cases\": 8,\n            \"country\": \"Nigeria\",\n            \"date\": \"2020-03-18T00:00:00.000Z\"\n        },\n        {\n            \"cases\": 8,\n            \"country\": \"Nigeria\",\n            \"date\": \"2020-03-19T00:00:00.000Z\"\n        },\n        {\n            \"cases\": 12,\n            \"country\": \"Nigeria\",\n            \"date\": \"2020-03-20T00:00:00.000Z\"\n        },\n   ]\n}",
+          "content": "HTTP/1.1 200 OK\n   [\n       {\n            \"cases\": 8,\n            \"country\": \"Nigeria\",\n            \"date\": \"2020-03-18T00:00:00.000Z\"\n        },\n        {\n            \"cases\": 8,\n            \"country\": \"Nigeria\",\n            \"date\": \"2020-03-19T00:00:00.000Z\"\n        },\n        {\n            \"cases\": 12,\n            \"country\": \"Nigeria\",\n            \"date\": \"2020-03-20T00:00:00.000Z\"\n        },\n   ]",
           "type": "json"
         }
       ]
@@ -379,6 +379,51 @@
         {
           "title": "Success-Response Example:",
           "content": "HTTP/1.1 200 OK\n{\n   \"Afghanistan\": [\n        {\n        \"cases\": 0,\n        \"country\": \"Afghanistan\",\n        \"date\": \"2020-01-21T23:00:00.000Z\"\n        },\n        {\n        \"cases\": 2,\n        \"country\": \"Afghanistan\",\n        \"date\": \"2020-01-22T23:00:00.000Z\"\n        },\n      ],\n   \"Cuba\": [\n        {\n        \"cases\": 0,\n        \"country\": \"Cuba\",\n        \"date\": \"2020-01-21T23:00:00.000Z\"\n        },\n        {\n        \"cases\": 2,\n        \"country\": \"Cuba\",\n        \"date\": \"2020-01-22T23:00:00.000Z\"\n        },\n      ],\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./routes/v2.js",
+    "groupTitle": "V2"
+  },
+  {
+    "type": "get",
+    "url": "/world-stats",
+    "title": "Get World Stats",
+    "version": "2.0.0",
+    "name": "Get_World_Stats",
+    "group": "V2",
+    "description": "<p>Get worldwide stats</p>",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "response",
+            "description": "<p>Response Object containing desired information.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "response.pagination",
+            "description": "<p>Object containning pagination information.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "response.data",
+            "description": "<p>Array containing client objects.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response Example:",
+          "content": "HTTP/1.1 200 OK\n{\n   \"activeCases\": 51988932,\n   \"confirmedCases\": 369687855,\n   \"recoveredCases\": 243394199,\n   \"fatalCases\": 7994906,\n   \"newCases\": 463849,\n   \"fatalityRatio\": 3.275939362744284,\n   \"incidentRate\": 405.2162807500837,\n   \"lastUpdated\": \"2021-07-08T03:21:26.000Z\",\n   \"subGroups\": 7974\n}",
           "type": "json"
         }
       ]
