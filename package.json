@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start": "npm run generate:docs && npm run fire",
+    "dev": "npm run generate:docs && npm run fireDev",
     "fire": "node app.js",
+    "fireDev": "nodemon app.js",
     "test": "echo \"Message: no test specified\" && exit 0",
     "generate:docs": "apidoc -i ./ -e node_modules -o ./docs"
   },
@@ -22,5 +24,8 @@
     "request": "^2.88.2",
     "swagger-jsdoc": "^6.0.0",
     "swagger-ui-express": "^4.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.10"
   }
 }
