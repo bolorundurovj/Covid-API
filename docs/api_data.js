@@ -33,7 +33,7 @@ define({ "api": [
     "title": "Get All Countries",
     "version": "1.0.0",
     "name": "Get_All_Countries",
-    "group": "Data",
+    "group": "V1",
     "description": "<p>Get the world data, as well as every country data</p>",
     "success": {
       "fields": {
@@ -70,7 +70,7 @@ define({ "api": [
       ]
     },
     "filename": "./routes/v1.js",
-    "groupTitle": "Data"
+    "groupTitle": "V1"
   },
   {
     "type": "get",
@@ -78,7 +78,7 @@ define({ "api": [
     "title": "Get Covid Data By Country",
     "version": "1.0.0",
     "name": "Get_Covid_Data_By_Country",
-    "group": "Data",
+    "group": "V1",
     "description": "<p>Get the latest update on a country</p>",
     "parameter": {
       "fields": {
@@ -114,7 +114,7 @@ define({ "api": [
       ]
     },
     "filename": "./routes/v1.js",
-    "groupTitle": "Data"
+    "groupTitle": "V1"
   },
   {
     "type": "get",
@@ -122,7 +122,7 @@ define({ "api": [
     "title": "Get Covid GeoData",
     "version": "1.0.0",
     "name": "Get_Covid_GeoData",
-    "group": "Data",
+    "group": "V1",
     "description": "<p>Get data in GeoJSON format, which is optimised for populating maps</p>",
     "success": {
       "fields": {
@@ -145,7 +145,7 @@ define({ "api": [
       ]
     },
     "filename": "./routes/v1.js",
-    "groupTitle": "Data"
+    "groupTitle": "V1"
   },
   {
     "type": "get",
@@ -153,7 +153,7 @@ define({ "api": [
     "title": "Get Covid Timeline For A Country",
     "version": "1.0.0",
     "name": "Get_Covid_Timeline_For_A_Country",
-    "group": "Data",
+    "group": "V1",
     "description": "<p>Get the timeline of daily cases in a country from January 2020 to date</p>",
     "parameter": {
       "fields": {
@@ -189,7 +189,7 @@ define({ "api": [
       ]
     },
     "filename": "./routes/v1.js",
-    "groupTitle": "Data"
+    "groupTitle": "V1"
   },
   {
     "type": "get",
@@ -197,7 +197,7 @@ define({ "api": [
     "title": "Get Covid Timeline For All Countries",
     "version": "1.0.0",
     "name": "Get_Covid_Timeline_For_All_Countries",
-    "group": "Data",
+    "group": "V1",
     "description": "<p>Get the timeline of the daily cases for all countries</p>",
     "success": {
       "fields": {
@@ -220,6 +220,50 @@ define({ "api": [
       ]
     },
     "filename": "./routes/v1.js",
-    "groupTitle": "Data"
+    "groupTitle": "V1"
+  },
+  {
+    "type": "get",
+    "url": "/country-timeline/:country",
+    "title": "Get Covid Timeline For A Country",
+    "version": "2.0.0",
+    "name": "Get_Covid_Timeline_For_A_Country",
+    "group": "V2",
+    "description": "<p>Get the timeline of daily cases in a country from January 2020 to date</p>",
+    "parameter": {
+      "fields": {
+        "Url Parameters": [
+          {
+            "group": "Url Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "country",
+            "description": "<p>Country Name.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "response",
+            "description": "<p>Array containing data objects.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response Example:",
+          "content": "HTTP/1.1 200 OK\n{\n   [\n       {\n            \"cases\": 8,\n            \"country\": \"Nigeria\",\n            \"date\": \"2020-03-18T00:00:00.000Z\"\n        },\n        {\n            \"cases\": 8,\n            \"country\": \"Nigeria\",\n            \"date\": \"2020-03-19T00:00:00.000Z\"\n        },\n        {\n            \"cases\": 12,\n            \"country\": \"Nigeria\",\n            \"date\": \"2020-03-20T00:00:00.000Z\"\n        },\n   ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./routes/v2.js",
+    "groupTitle": "V2"
   }
 ] });

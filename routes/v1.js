@@ -12,7 +12,7 @@ const { getAll, getGeoJSON, getSingleCountry, getAllCountryTimeline, getSingleTi
  * @api {get} /all Get All Countries
  * @apiVersion 1.0.0
  * @apiName Get All Countries
- * @apiGroup Data
+ * @apiGroup V1
  *
  * @apiDescription Get the world data, as well as every country data
  *
@@ -135,7 +135,7 @@ router.route('/all').get(getAll);
  * @api {get} /geojson Get Covid GeoData
  * @apiVersion 1.0.0
  * @apiName Get Covid GeoData
- * @apiGroup Data
+ * @apiGroup V1
  *
  * @apiDescription Get data in GeoJSON format, which is optimised for populating maps
  *
@@ -202,7 +202,7 @@ router.route('/geojson').get(getGeoJSON);
  * @api {get} /country/:country Get Covid Data By Country
  * @apiVersion 1.0.0
  * @apiName Get Covid Data By Country
- * @apiGroup Data
+ * @apiGroup V1
  *
  * @apiDescription Get the latest update on a country
  *
@@ -250,7 +250,7 @@ router.route('/country/:country').get(getSingleCountry);
  * @api {get} /timeline/all Get Covid Timeline For All Countries
  * @apiVersion 1.0.0
  * @apiName Get Covid Timeline For All Countries
- * @apiGroup Data
+ * @apiGroup V1
  *
  * @apiDescription Get the timeline of the daily cases for all countries
  *
@@ -307,7 +307,7 @@ router.route('/timeline/all').get(getAllCountryTimeline);
  * @api {get} /timeline/:country Get Covid Timeline For A Country
  * @apiVersion 1.0.0
  * @apiName Get Covid Timeline For A Country
- * @apiGroup Data
+ * @apiGroup V1
  *
  * @apiDescription Get the timeline of daily cases in a country from January 2020 to date
  *
