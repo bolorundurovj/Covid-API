@@ -91,7 +91,6 @@ router.route('/all-countries-stats').get(getAllCountriesStats);
  * @apiSuccess (200) {Array} response  Array containing data objects.
  * @apiSuccessExample {json} Success-Response Example:
  * HTTP/1.1 200 OK
- * {
  *    [
  *       {
  *           "location": {
@@ -114,7 +113,6 @@ router.route('/all-countries-stats').get(getAllCountriesStats);
  *           "lastUpdated": "2021-07-08T03:21:26.000Z"
  *       },
  *   ]
- *  }
  */
 router.route('/country-stats/:country').get(getSingleCountryStats);
 
@@ -183,7 +181,6 @@ router.route('/all-countries-timeline').get(getAllCountriesTimeline);
  * @apiSuccess (200) {Array} response  Array containing data objects.
  * @apiSuccessExample {json} Success-Response Example:
  * HTTP/1.1 200 OK
- * {
  *    [
  *        {
  *             "cases": 8,
@@ -201,7 +198,6 @@ router.route('/all-countries-timeline').get(getAllCountriesTimeline);
  *             "date": "2020-03-20T00:00:00.000Z"
  *         },
  *    ]
- * }
  */
 router.route('/country-timeline/:country').get(getSingleCountryTimeline);
 
