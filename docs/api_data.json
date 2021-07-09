@@ -224,6 +224,95 @@
   },
   {
     "type": "get",
+    "url": "/all-countries-stats",
+    "title": "Get All Countries",
+    "version": "2.0.0",
+    "name": "Get_All_Countries",
+    "group": "V2",
+    "description": "<p>Get every country data</p>",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "response",
+            "description": "<p>Response Object containing desired information.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "response.pagination",
+            "description": "<p>Object containning pagination information.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "response.data",
+            "description": "<p>Array containing client objects.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response Example:",
+          "content": "HTTP/1.1 200 OK\n[\n  {\n      \"activeCases\": 2,\n      \"confirmedCases\": 2530,\n      \"recoveredCases\": 2444,\n      \"fatalCases\": 84,\n      \"newCases\": 0,\n      \"location\": {\n          \"type\": \"Point\",\n          \"coordinates\": [\n              -61.7964,\n              17.0608\n          ]\n      },\n      \"fatalityRatio\": 3.3201581027667983,\n      \"incidentRate\": 1291.7653786455355,\n      \"country\": \"Antigua and Barbuda\",\n      \"lastUpdated\": \"2021-07-08T03:21:26.000Z\",\n      \"subGroups\": 2\n  },\n  {\n      \"activeCases\": 574657,\n      \"confirmedCases\": 9168103,\n      \"recoveredCases\": 8399024,\n      \"fatalCases\": 194422,\n      \"newCases\": 19423,\n      \"location\": {\n          \"type\": \"Point\",\n          \"coordinates\": [\n              -63.6167,\n              -38.4161\n          ]\n      },\n      \"fatalityRatio\": 2.1211150858239747,\n      \"incidentRate\": 10164.142105577697,\n      \"country\": \"Argentina\",\n      \"lastUpdated\": \"2021-07-08T03:21:26.000Z\",\n      \"subGroups\": 2\n  },\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./routes/v2.js",
+    "groupTitle": "V2"
+  },
+  {
+    "type": "get",
+    "url": "/country-stats/:country",
+    "title": "Get Covid Data By Country",
+    "version": "2.0.0",
+    "name": "Get_Covid_Data_By_Country",
+    "group": "V2",
+    "description": "<p>Get the latest update on a country</p>",
+    "parameter": {
+      "fields": {
+        "Url Parameters": [
+          {
+            "group": "Url Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "country",
+            "description": "<p>Country Name.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Array",
+            "optional": false,
+            "field": "response",
+            "description": "<p>Array containing data objects.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response Example:",
+          "content": "HTTP/1.1 200 OK\n{\n   [\n      {\n          \"location\": {\n              \"type\": \"Point\",\n              \"coordinates\": [\n                  8.6753,\n                  9.082\n              ]\n          },\n          \"state\": \"\",\n          \"stateCountry\": \"Nigeria\",\n          \"activeCases\": 1580,\n          \"confirmedCases\": 168110,\n          \"fatalCases\": 2122,\n          \"recoveredCases\": 164408,\n          \"newCases\": 0,\n          \"incidentRate\": 81.551536241314,\n          \"fatalityRatio\": 1.2622687526024627,\n          \"country\": \"Nigeria\",\n          \"lastUpdated\": \"2021-07-08T03:21:26.000Z\"\n      },\n  ]\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./routes/v2.js",
+    "groupTitle": "V2"
+  },
+  {
+    "type": "get",
     "url": "/country-timeline/:country",
     "title": "Get Covid Timeline For A Country",
     "version": "2.0.0",
@@ -270,7 +359,7 @@
     "type": "get",
     "url": "/all-countries-timeline",
     "title": "Get Covid Timeline For All Countries",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "name": "Get_Covid_Timeline_For_All_Countries",
     "group": "V2",
     "description": "<p>Get the timeline of the daily cases for all countries</p>",
