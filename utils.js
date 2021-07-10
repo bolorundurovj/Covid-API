@@ -28,151 +28,162 @@ const runCronJob = async () => {
     .catch((err) => {
       console.log(err);
     });
-  cron.schedule('23 59 * * * *', () => {
-    let date = new Date(Date.now());
-    let day = date.getDate();
-    let year = date.getUTCFullYear();
-    let month = date.getMonth();
+  cron.schedule(
+    '23 59 * * * *',
+    () => {
+      let date = new Date(Date.now());
+      let day = date.getDate();
+      let year = date.getUTCFullYear();
+      let month = date.getMonth();
 
-    let previousDay = day - 1;
-    let oPreviousDay = day - 2;
-    let correctMonth = month + 1;
-    if (previousDay < 10) {
-      previousDay = '0' + previousDay;
-    }
-    if (oPreviousDay < 10) {
-      oPreviousDay = '0' + oPreviousDay;
-    }
-    if (correctMonth < 10) {
-      correctMonth = '0' + correctMonth;
-    }
+      let previousDay = day - 1;
+      let oPreviousDay = day - 2;
+      let correctMonth = month + 1;
+      if (previousDay < 10) {
+        previousDay = '0' + previousDay;
+      }
+      if (oPreviousDay < 10) {
+        oPreviousDay = '0' + oPreviousDay;
+      }
+      if (correctMonth < 10) {
+        correctMonth = '0' + correctMonth;
+      }
 
-    let newDate = correctMonth + '-' + previousDay + '-' + year;
-    let oldDate = correctMonth + '-' + (oPreviousDay) + '-' + year;
+      let newDate = correctMonth + '-' + previousDay + '-' + year;
+      let oldDate = correctMonth + '-' + oPreviousDay + '-' + year;
 
-    let fileName = newDate + '.csv';
-    let oldFileName = oldDate + '.csv';
-    console.log(fileName, oldFileName);
+      let fileName = newDate + '.csv';
+      let oldFileName = oldDate + '.csv';
+      console.log(fileName, oldFileName);
 
-    const file = fs.createWriteStream(fileName);
-    const oldFile = fs.createWriteStream(oldFileName);
+      const file = fs.createWriteStream(fileName);
+      const oldFile = fs.createWriteStream(oldFileName);
 
-    const results = [];
-    let data = [];
-    let totalConfirmed = 0;
-    let totalDeaths = 0;
-    let totalRecovered = 0;
-    let totalActive = 0;
+      const results = [];
+      let data = [];
+      let totalConfirmed = 0;
+      let totalDeaths = 0;
+      let totalRecovered = 0;
+      let totalActive = 0;
 
-    let dayBeforePreviousDaysData = [];
+      let dayBeforePreviousDaysData = [];
 
-    request
-      .get(
-        `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/${oldFileName}`
-      )
-      .on('error', function (err) {
-        console.error(err);
-      })
-      .pipe(oldFile)
-      .on('finish', () => {
-        fs.createReadStream(oldFileName)
-          .pipe(csv())
-          .on('data', (data) => results.push(data))
-          .on('end', async () => {
-            if (results.length > 0) {
-              dayBeforePreviousDaysData = results.map((x) => {
-                return {
-                  country: x.Country_Region,
-                  state: x.Province_State,
-                  stateCountry: x.Combined_Key,
-                  lastUpdated: x.Last_Update,
-                  activeCases: Number(x.Active),
-                  confirmedCases: Number(x.Confirmed),
-                  fatalCases: Number(x.Deaths),
-                  recoveredCases: Number(x.Recovered),
-                  incidentRate: Number(x.Incident_Rate),
-                  fatalityRatio: Number(x.Case_Fatality_Ratio),
-                  location: {
-                    coordinates: [Number(x.Long_), Number(x.Lat)],
-                  },
-                };
-              });
-            }
-          });
-      });
-
-    request
-      .get(
-        `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/${fileName}`
-      )
-      .on('error', function (err) {
-        console.error(err);
-      })
-      .pipe(file)
-      .on('finish', () => {
-        fs.createReadStream(fileName)
-          .pipe(csv())
-          .on('data', (data) => results.push(data))
-          .on('end', async () => {
-            if (results.length > 0) {
-              const mappedResults = results.map((x) => {
-                return {
-                  country: x.Country_Region,
-                  state: x.Province_State,
-                  stateCountry: x.Combined_Key,
-                  lastUpdated: x.Last_Update,
-                  activeCases: Number(x.Active),
-                  confirmedCases: Number(x.Confirmed),
-                  fatalCases: Number(x.Deaths),
-                  recoveredCases: Number(x.Recovered),
-                  incidentRate: Number(x.Incident_Rate),
-                  fatalityRatio: Number(x.Case_Fatality_Ratio),
-                  location: {
-                    coordinates: [Number(x.Long_), Number(x.Lat)],
-                  },
-                };
-              });
-
-              mappedResults.forEach(x => {
-                console.log(dayBeforePreviousDaysData[0].stateCountry);
-                x.newCases = (x.confirmedCases - dayBeforePreviousDaysData.find(y => y.stateCountry == x.stateCountry)[`confirmedCases`]);
-              });
-              await Case.deleteMany({});
-              await Case.insertMany(mappedResults).then(async() => {
-                console.log(`Inserted Data for V2+`);
-              });
-              results.forEach((result) => {
-                totalActive += +result.Active || 0
-                totalRecovered += +result.Recovered || 0;
-                totalConfirmed += +result.Confirmed || 0;
-                totalDeaths += +result.Deaths || 0;
-              });
-
-              countryList.forEach((country) => {
-                let countryObj = JSON.parse(JSON.stringify(country));
-                let state = getStats(countryObj, results);
-                data.push(state);
-              });
-
-              var items = {
-                total_confirmed: totalConfirmed,
-                total_deaths: totalDeaths,
-                total_recovered: totalRecovered,
-                total_active: totalActive,
-                last_date_updated: date,
-                country_statistics: data.sort(),
-              };
-
-              db.collection('covid_statistics').deleteOne({});
-              db.collection('covid_statistics')
-                .insertOne(items)
-                .then(() => {
-                  console.log('Automatically Inserted Successfully for V1');
+      request
+        .get(
+          `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/${oldFileName}`
+        )
+        .on('error', function (err) {
+          console.error(err);
+        })
+        .pipe(oldFile)
+        .on('finish', () => {
+          fs.createReadStream(oldFileName)
+            .pipe(csv())
+            .on('data', (data) => results.push(data))
+            .on('end', async () => {
+              if (results.length > 0) {
+                dayBeforePreviousDaysData = results.map((x) => {
+                  return {
+                    country: x.Country_Region,
+                    state: x.Province_State,
+                    stateCountry: x.Combined_Key,
+                    lastUpdated: x.Last_Update,
+                    activeCases: Number(x.Active),
+                    confirmedCases: Number(x.Confirmed),
+                    fatalCases: Number(x.Deaths),
+                    recoveredCases: Number(x.Recovered),
+                    incidentRate: Number(x.Incident_Rate),
+                    fatalityRatio: Number(x.Case_Fatality_Ratio),
+                    location: {
+                      coordinates: [Number(x.Long_), Number(x.Lat)],
+                    },
+                  };
                 });
-            }
-          });
-      });
-  });
+              }
+            });
+        });
+
+      request
+        .get(
+          `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/${fileName}`
+        )
+        .on('error', function (err) {
+          console.error(err);
+        })
+        .pipe(file)
+        .on('finish', () => {
+          fs.createReadStream(fileName)
+            .pipe(csv())
+            .on('data', (data) => results.push(data))
+            .on('end', async () => {
+              if (results.length > 0) {
+                const mappedResults = results.map((x) => {
+                  return {
+                    country: x.Country_Region,
+                    state: x.Province_State,
+                    stateCountry: x.Combined_Key,
+                    lastUpdated: x.Last_Update,
+                    activeCases: Number(x.Active),
+                    confirmedCases: Number(x.Confirmed),
+                    fatalCases: Number(x.Deaths),
+                    recoveredCases: Number(x.Recovered),
+                    incidentRate: Number(x.Incident_Rate),
+                    fatalityRatio: Number(x.Case_Fatality_Ratio),
+                    location: {
+                      coordinates: [Number(x.Long_), Number(x.Lat)],
+                    },
+                  };
+                });
+
+                mappedResults.forEach((x) => {
+                  console.log(dayBeforePreviousDaysData[0].stateCountry);
+                  x.newCases =
+                    x.confirmedCases -
+                    dayBeforePreviousDaysData.find(
+                      (y) => y.stateCountry == x.stateCountry
+                    )[`confirmedCases`];
+                });
+                await Case.deleteMany({});
+                await Case.insertMany(mappedResults).then(async () => {
+                  console.log(`Inserted Data for V2+`);
+                });
+                results.forEach((result) => {
+                  totalActive += +result.Active || 0;
+                  totalRecovered += +result.Recovered || 0;
+                  totalConfirmed += +result.Confirmed || 0;
+                  totalDeaths += +result.Deaths || 0;
+                });
+
+                countryList.forEach((country) => {
+                  let countryObj = JSON.parse(JSON.stringify(country));
+                  let state = getStats(countryObj, results);
+                  data.push(state);
+                });
+
+                var items = {
+                  total_confirmed: totalConfirmed,
+                  total_deaths: totalDeaths,
+                  total_recovered: totalRecovered,
+                  total_active: totalActive,
+                  last_date_updated: date,
+                  country_statistics: data.sort(),
+                };
+
+                db.collection('covid_statistics').deleteOne({});
+                db.collection('covid_statistics')
+                  .insertOne(items)
+                  .then(() => {
+                    console.log('Automatically Inserted Successfully for V1');
+                  });
+              }
+            });
+        });
+    },
+    {
+      scheduled: true,
+      timezone: 'Africa/Algiers',
+    }
+  );
 
   function getStats(countryObj, results) {
     const statistics = [];
