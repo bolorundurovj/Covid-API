@@ -35,13 +35,21 @@ Check the `live API` <a href="https://ncovid19api.herokuapp.com/"> here</a>
 * [Cors](https://www.npmjs.com/package/cors)
 * [Csv Parser](https://www.npmjs.com/package/csv-parser)
 
-## Routes
+## Routes [V1](https://ncovid19api.herokuapp.com/#api-V1)
 - #### / || Contains api documentation
 - #### /all || Get the world total, as well as every country’s data
 - #### /country/{country} || Get the latest update on each country
 - #### /timeline/{country} || Get the timeline of daily cases in a specific country from January 2020 to date
 - #### /timeline/all || Get the timeline of the daily cases for all countries from January 2020 to date
 - #### /geojson || Get data in GeoJSON format, which is optimised for populating maps
+
+## Routes [V2](https://ncovid19api.herokuapp.com/#api-V2er)
+- #### / || Contains api documentation
+- #### /v2/all-countries-stat || Get every country’s data
+- #### /v2/country-stats/:country || Get the latest update on each country
+- #### /v2/country-timeline/:country || Get the timeline of daily cases in a specific country from January 2020 to date
+- #### /v2/all-countries-timeline || Get the timeline of the daily cases for all countries from January 2020 to date
+- #### /v2/world-stats || Get collated statistics for the whole world
 
 ## Getting started
 
