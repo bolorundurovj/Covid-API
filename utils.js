@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
-const cron = require('node-cron');
-const fs = require('fs');
-const csv = require('csv-parser');
-const request = require('request');
-const Case = require('./models/Case');
+const mongoose = require("mongoose");
+const cron = require("node-cron");
+const fs = require("fs");
+const csv = require("csv-parser");
+const request = require("request");
+const Case = require("./models/Case");
 
-const countryList = require('./countries.json');
+const countryList = require("./countries.json");
 
 const connectDB = async () => {
   const conn = await mongoose.connect(process.env.URL, {
@@ -29,7 +29,7 @@ const runCronJob = async () => {
       console.log(err);
     });
   cron.schedule(
-    '23 59 * * * *',
+    "15 17 * * * *",
     () => {
       let date = new Date(Date.now());
       let day = date.getDate();
@@ -37,151 +37,113 @@ const runCronJob = async () => {
       let month = date.getMonth();
 
       let previousDay = day - 1;
-      let oPreviousDay = day - 2;
       let correctMonth = month + 1;
       if (previousDay < 10) {
-        previousDay = '0' + previousDay;
-      }
-      if (oPreviousDay < 10) {
-        oPreviousDay = '0' + oPreviousDay;
+        previousDay = "0" + previousDay;
       }
       if (correctMonth < 10) {
-        correctMonth = '0' + correctMonth;
+        correctMonth = "0" + correctMonth;
       }
 
-      let newDate = correctMonth + '-' + previousDay + '-' + year;
-      let oldDate = correctMonth + '-' + oPreviousDay + '-' + year;
+      let newDate = correctMonth + "-" + previousDay + "-" + year;
 
-      let fileName = newDate + '.csv';
-      let oldFileName = oldDate + '.csv';
-      console.log(fileName, oldFileName);
+      let fileName = newDate + ".csv";
 
       const file = fs.createWriteStream(fileName);
-      const oldFile = fs.createWriteStream(oldFileName);
 
       const results = [];
-      let data = [];
-      let totalConfirmed = 0;
-      let totalDeaths = 0;
-      let totalRecovered = 0;
-      let totalActive = 0;
 
       let dayBeforePreviousDaysData = [];
 
       request
         .get(
-          `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/${oldFileName}`
-        )
-        .on('error', function (err) {
-          console.error(err);
-        })
-        .pipe(oldFile)
-        .on('finish', () => {
-          fs.createReadStream(oldFileName)
-            .pipe(csv())
-            .on('data', (data) => results.push(data))
-            .on('end', async () => {
-              if (results.length > 0) {
-                dayBeforePreviousDaysData = results.map((x) => {
-                  return {
-                    country: x.Country_Region,
-                    state: x.Province_State,
-                    stateCountry: x.Combined_Key,
-                    lastUpdated: x.Last_Update,
-                    activeCases: Number(x.Active),
-                    confirmedCases: Number(x.Confirmed),
-                    fatalCases: Number(x.Deaths),
-                    recoveredCases: Number(x.Recovered),
-                    incidentRate: Number(x.Incident_Rate),
-                    fatalityRatio: Number(x.Case_Fatality_Ratio),
-                    location: {
-                      coordinates: [Number(x.Long_), Number(x.Lat)],
-                    },
-                  };
-                });
-              }
-            });
-        });
-
-      request
-        .get(
           `https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/${fileName}`
         )
-        .on('error', function (err) {
+        .on("error", function (err) {
           console.error(err);
         })
         .pipe(file)
-        .on('finish', () => {
+        .on("finish", () => {
           fs.createReadStream(fileName)
             .pipe(csv())
-            .on('data', (data) => results.push(data))
-            .on('end', async () => {
+            .on("data", (data) => results.push(data))
+            .on("end", async () => {
               if (results.length > 0) {
-                const mappedResults = results.map((x) => {
-                  return {
-                    country: x.Country_Region,
-                    state: x.Province_State,
-                    stateCountry: x.Combined_Key,
-                    lastUpdated: x.Last_Update,
-                    activeCases: Number(x.Active),
-                    confirmedCases: Number(x.Confirmed),
-                    fatalCases: Number(x.Deaths),
-                    recoveredCases: Number(x.Recovered),
-                    incidentRate: Number(x.Incident_Rate),
-                    fatalityRatio: Number(x.Case_Fatality_Ratio),
+                results.forEach((x) => {
+                  console.log(x);
+                  const mappedData = {
+                    country: x["Country_Region"] || x["3"],
+                    state: x["Province_State"] || x["2"],
+                    stateCountry: x["Combined_Key"] || x["11"],
+                    lastUpdated: x["Last_Update"] || x["4"],
+                    activeCases: Number(x["Active"]) || Number(x["10"]) || 0,
+                    confirmedCases:
+                      Number(x["Confirmed"]) || Number(x["7"]) || 0,
+                    fatalCases: Number(x["Deaths"]) || Number(x["8"]) || 0,
+                    recoveredCases:
+                      Number(x["Recovered"]) || Number(x["9"]) || 0,
+                    incidentRate:
+                      Number(x["Incident_Rate"]) || Number(x["12"]) || 0,
+                    fatalityRatio:
+                      Number(x["Case_Fatality_Ratio"]) || Number(x["13"]) || 0,
                     location: {
-                      coordinates: [Number(x.Long_), Number(x.Lat)],
+                      coordinates: [
+                        Number(x["Long_"]) || Number(x["6"]) || 0,
+                        Number(x["Lat"]) || Number(x["5"]) || 0,
+                      ],
                     },
                   };
-                });
+                  console.log(mappedData);
 
-                mappedResults.forEach((x) => {
-                  console.log(dayBeforePreviousDaysData[0].stateCountry);
-                  x.newCases =
-                    x.confirmedCases -
-                    dayBeforePreviousDaysData.find(
-                      (y) => y.stateCountry == x.stateCountry
-                    )[`confirmedCases`];
-                });
-                await Case.deleteMany({});
-                await Case.insertMany(mappedResults).then(async () => {
-                  console.log(`Inserted Data for V2+`);
-                });
-                results.forEach((result) => {
-                  totalActive += +result.Active || 0;
-                  totalRecovered += +result.Recovered || 0;
-                  totalConfirmed += +result.Confirmed || 0;
-                  totalDeaths += +result.Deaths || 0;
-                });
+                  Case.deleteMany({});
+                  Case.update(
+                    {
+                      country: mappedData.country,
+                      state: mappedData.state,
+                      stateCountry: mappedData.stateCountry,
+                    },
+                    mappedData,
+                    { upsert: true }
+                  );
+                  console.log(`Upserted Data for V2+`);
+                  // .then(async () => {
+                  // });
+                  // results.forEach((result) => {
+                  //   totalActive += +result.Active || 0;
+                  //   totalRecovered += +result.Recovered || 0;
+                  //   totalConfirmed += +result.Confirmed || 0;
+                  //   totalDeaths += +result.Deaths || 0;
+                  // });
 
-                countryList.forEach((country) => {
-                  let countryObj = JSON.parse(JSON.stringify(country));
-                  let state = getStats(countryObj, results);
-                  data.push(state);
+                  // countryList.forEach((country) => {
+                  //   let countryObj = JSON.parse(JSON.stringify(country));
+                  //   let state = getStats(countryObj, results);
+                  //   data.push(state);
+                  // });
+
+                  // var items = {
+                  //   total_confirmed: totalConfirmed,
+                  //   total_deaths: totalDeaths,
+                  //   total_recovered: totalRecovered,
+                  //   total_active: totalActive,
+                  //   last_date_updated: date,
+                  //   country_statistics: data.sort(),
+                  // };
+
+                  // db.collection("covid_statistics").deleteOne({});
+                  // db.collection("covid_statistics")
+                  //   .insertOne(items)
+                  //   .then(() => {
+                  //     console.log("Automatically Inserted Successfully for V1");
+                  //   });
                 });
-
-                var items = {
-                  total_confirmed: totalConfirmed,
-                  total_deaths: totalDeaths,
-                  total_recovered: totalRecovered,
-                  total_active: totalActive,
-                  last_date_updated: date,
-                  country_statistics: data.sort(),
-                };
-
-                db.collection('covid_statistics').deleteOne({});
-                db.collection('covid_statistics')
-                  .insertOne(items)
-                  .then(() => {
-                    console.log('Automatically Inserted Successfully for V1');
-                  });
               }
             });
         });
     },
     {
       scheduled: true,
-      timezone: 'Africa/Algiers',
+      timezone: "Africa/Algiers",
     }
   );
 
