@@ -23,8 +23,8 @@ define({ "api": [
     "url": "",
     "version": "0.0.0",
     "filename": "./docs/main.js",
-    "group": "C:\\Users\\bolorundurovb\\Documents\\Web Projects\\Covid API\\docs\\main.js",
-    "groupTitle": "C:\\Users\\bolorundurovb\\Documents\\Web Projects\\Covid API\\docs\\main.js",
+    "group": "/Users/valiant-joshuabolorunduro/Documents/Workspace/Open Source/Covid-API/docs/main.js",
+    "groupTitle": "/Users/valiant-joshuabolorunduro/Documents/Workspace/Open Source/Covid-API/docs/main.js",
     "name": ""
   },
   {
