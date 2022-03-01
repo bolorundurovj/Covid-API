@@ -22,9 +22,7 @@
     "express-rate-limit": "^5.5.0",
     "mongoose": "^5.9.17",
     "node-cron": "^2.0.3",
-    "request": "^2.88.2",
-    "swagger-jsdoc": "^6.0.0",
-    "swagger-ui-express": "^4.1.6"
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.10"
