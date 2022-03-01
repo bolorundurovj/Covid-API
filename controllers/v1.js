@@ -1,15 +1,6 @@
 const request = require('request');
 
-const { connectDB } = require('../utils');
-
-let db;
-connectDB()
-  .then((d) => {
-    db = d.connection;
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+const { db } = require('../utils');
 
 exports.getAll = (req, res) => {
   db.collection('covid_statistics')
